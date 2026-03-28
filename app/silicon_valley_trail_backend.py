@@ -127,7 +127,7 @@ def _event_rest_beta_users(state: GameState) -> str:
     state.morale += 2
     state.hype += 5
     state.bugs += 2  # feedback introduces new issues
-    return " 🗣️ Beta users give feedback. Hype spikes, but new bugs appear 👾"
+    return "🗣️ Beta users give feedback. Hype spikes, but new bugs appear 👾"
 
 def _event_travel_flat_tire(state: GameState) -> str:
     state.fuel -= 10
@@ -147,37 +147,57 @@ def _event_travel_hackathon(state: GameState) -> str:
         state.cash -= 10
         return "😓 Hackathon flop. Time wasted and morale drops 😩"
 
-def _event_travel_supply_run(state: GameState) -> str::
+def _event_travel_supply_run(state: GameState) -> str:
     state.cash -= 25
     state.fuel += 15
     state.morale += 2
     return "🛒 Quick Costco stop. Supplies restocked, but it costs cash 💸"
 
+def _event_travel_nothing(state: GameState) -> str:
+    return "😐 Nothing unusual happens today 🙃"
+
 
 EVENTS: List[Dict[str, object]] = [
-    {"name": "Roadwork Delay", "applies_to": {"travel"}, "effect": _event_travel_roadwork},
-    {"name": "Mentor Call", "applies_to": {"rest"}, "effect": _event_rest_mentor_call},
-    {"name": "Beta Users", "applies_to": {"rest"}, "effect": _event_rest_beta_users},
-    {"name": "Flat Tire", "applies_to": {"travel"}, "effect": _event_travel_flat_tire},
-    {"name": "Hackathon", "applies_to": {"travel"}, "effect": _event_travel_hackathon},
-    {"name": "Supply Run", "applies_to": {"travel"}, "effect": _event_travel_supply_run},   
+    #Travel events
+    {"name": "Roadwork Delay", "applies_to": {"travel"}, "effect": _event_travel_roadwork, "weight": 3},
+    {"name": "Flat Tire", "applies_to": {"travel"}, "effect": _event_travel_flat_tire, "weight": 2},
+    {"name": "Nothing Happens", "applies_to": {"travel"}, "effect": _event_travel_nothing, "weight": 3},
+    {"name": "Hackathon", "applies_to": {"travel"}, "effect": _event_travel_hackathon, "optional": True, "weight": 1},
+    {"name": "Supply Run", "applies_to": {"travel"}, "effect": _event_travel_supply_run, "optional": True, "weight": 1},  
+    
+    #Rest events
+    {"name": "Mentor Call", "applies_to": {"rest"}, "effect": _event_rest_mentor_call, "weight": 2},
+    {"name": "Beta Users", "applies_to": {"rest"}, "effect": _event_rest_beta_users, "weight": 2},
+    {"name": "Nothing Happens", "applies_to": {"travel"}, "effect": _event_travel_nothing, "weight": 1},
+
 ]
 
 
 def trigger_random_event(state: GameState, action: str) -> str:
     """
     Randomly selects an event from a list.
-    Each event modifies the GameState and returns a message for the UI.
+    Optional events can be accepted or skipped by the player.
     """
     eligible = [e for e in EVENTS if action in e["applies_to"]]
     if not eligible:
         return "No event this time."
 
     event = random.choice(eligible)
+
+    # Check if event is optional
+    is_optional = event.get("optional", False)
+
+    if is_optional:
+        print(f"\n⚡ Opportunity: {event['name']}")
+        choice = input("Do you want to take this opportunity? (y/n): ").strip().lower()
+
+        if choice != "y":
+            return "🙂‍↔️ You passed on the opportunity. The day continues smoothly 😀"
+
+    # Apply event effect
     effect: EventEffect = event["effect"]  # type: ignore[assignment]
     return effect(state)
-
-
+    
 # --- 5) Win/Lose conditions ---
 def check_end_conditions(state: GameState) -> None:
     """Set game over state and determine win/loss."""
