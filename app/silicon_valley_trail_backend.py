@@ -50,7 +50,6 @@ class GameState:
     morale: int = 50
 
     # Optional "startup-y" stats (requested).
-    hype: int = 0
     bugs: int = 0
 
     # Game end flags.
@@ -113,21 +112,18 @@ def _event_travel_roadwork(state: GameState) -> str:
     state.fuel -= 15
     state.morale -= 1
     state.bugs += 1
-    state.hype = max(0, state.hype - 2)
     return "🚧 Roadwork slowed you down. Fuel and morale take a hit ⬇️"
 
 def _event_rest_mentor_call(state: GameState) -> str:
     state.morale += 8
-    state.hype += 2
     state.bugs = max(0, state.bugs - 2)
     state.cash -= 10  # paying for someone’s time / perks
     return "🧙🏻‍♀️ A mentor schedules time with your crew. Bugs drop; morale rises 💪🏼"
 
 def _event_rest_beta_users(state: GameState) -> str:
     state.morale += 2
-    state.hype += 5
     state.bugs += 2  # feedback introduces new issues
-    return "🗣️ Beta users give feedback. Hype spikes, but new bugs appear 👾"
+    return "🗣️ Beta users give feedback. Morale spikes, but new bugs appear 👾"
 
 def _event_travel_flat_tire(state: GameState) -> str:
     state.fuel -= 10
@@ -138,7 +134,6 @@ def _event_travel_flat_tire(state: GameState) -> str:
 def _event_travel_hackathon(state: GameState) -> str:
     if random.random() < 0.6:
         state.cash += 25
-        state.hype += 5
         state.morale += 3
         state.bugs += 2
         return "💻 Hackathon win! Big gains, but new bugs introduced 👾"
@@ -149,7 +144,7 @@ def _event_travel_hackathon(state: GameState) -> str:
 
 def _event_travel_supply_run(state: GameState) -> str:
     state.cash -= 25
-    state.fuel += 15
+    state.fuel += 20
     state.morale += 2
     return "🛒 Quick Costco stop. Supplies restocked, but it costs cash 💸"
 
@@ -161,7 +156,7 @@ EVENTS: List[Dict[str, object]] = [
     #Travel events
     {"name": "Roadwork Delay", "applies_to": {"travel"}, "effect": _event_travel_roadwork, "weight": 3},
     {"name": "Flat Tire", "applies_to": {"travel"}, "effect": _event_travel_flat_tire, "weight": 2},
-    {"name": "Nothing Happens", "applies_to": {"travel"}, "effect": _event_travel_nothing, "weight": 3},
+    {"name": "Nothing Happens", "applies_to": {"travel"}, "effect": _event_travel_nothing, "weight": 1},
     {"name": "Hackathon", "applies_to": {"travel"}, "effect": _event_travel_hackathon, "optional": True, "weight": 1},
     {"name": "Supply Run", "applies_to": {"travel"}, "effect": _event_travel_supply_run, "optional": True, "weight": 1},  
     
@@ -180,9 +175,10 @@ def trigger_random_event(state: GameState, action: str) -> str:
     """
     eligible = [e for e in EVENTS if action in e["applies_to"]]
     if not eligible:
-        return "No event this time."
+        return  "😐 Nothing unusual happens today 🙃"
 
-    event = random.choice(eligible)
+    weights = [e.get("weight", 1) for e in eligible]
+    event = random.choices(eligible, weights=weights, k=1)[0]
 
     # Check if event is optional
     is_optional = event.get("optional", False)
@@ -235,7 +231,8 @@ def travel(state: GameState) -> None:
 
     elif condition == "heat":
         state.bugs += 3
-        state.morale -= 3
+        state.morale -= 4
+        state.fuel -= 8
         print("🥵 Heatwave hits. The team struggles and bugs pile up 😫")
 
     elif condition == "fog":
@@ -249,7 +246,7 @@ def travel(state: GameState) -> None:
     # Core travel costs:
     # - Fuel cost scales with distance.
     # - Morale can drop if weather is bad.
-    fuel_cost = int(round((distance / 4) * float(weather["fuel_multiplier"])))
+    fuel_cost = int(round((distance / 3) * float(weather["fuel_multiplier"])))
     state.fuel -= fuel_cost
     state.morale += int(weather["morale_delta"])
 
@@ -260,7 +257,13 @@ def travel(state: GameState) -> None:
     state.progress_index += 1
     state.sync_location()
 
-    # One random event for travel days.
+# If we've reached San Francisco, advance the day before announcing arrival
+    if state.current_location == "San Francisco":
+        state.day += 1  # 👈 move to next day for Demo Day
+        print(f"\n📍 Day {state.day} — You’ve arrived in San Francisco. Time for Demo Day 🤞🏾\n")
+        return
+
+    # Otherwise trigger event
     message = trigger_random_event(state, action="travel")
     print(message)
 
@@ -316,11 +319,6 @@ def final_pitch(state: GameState) -> bool:
         success_chance -= 0.3
 
 
-    # hype (small bonus)
-    if state.hype > 5:
-        success_chance += 0.1
-
-    success_chance = max(0.1, min(0.85, success_chance))
 
     if random.random() < success_chance:
         print("🚀 The demo is flawless. Investors are impressed 💰")
@@ -337,7 +335,6 @@ def show_player_status(state: GameState) -> None:
     print(f"Day: {state.day}")
     print(f"Location: {state.current_location}")
     print(f"Cash: {state.cash} | Fuel: {state.fuel} | Morale: {state.morale}")
-    print(f"Hype: {state.hype} | Bugs: {state.bugs}")
 
 
 def prompt_action() -> str:
