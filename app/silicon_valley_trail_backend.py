@@ -354,6 +354,13 @@ def trigger_random_event(state: GameState, action: str) -> str:
 
     # Apply event
     effect: EventEffect = event["effect"]
+    
+    before = {
+        "fuel": state.fuel,
+        "cash": state.cash,
+        "morale": state.morale,
+        "bugs": state.bugs,
+    }
 
     message = effect(state)
 
@@ -433,30 +440,20 @@ def travel(state: GameState) -> None:
 
     distance = get_distance(start, end)
     weather = get_weather(start, end)
+    condition = weather["condition"]
 
     fuel_needed = int(round((distance / 2.5) * float(weather["fuel_multiplier"])))
-    condition = weather["condition"]
-    # --- Final leg check (Daly City → SF) ---
-    # Final leg check (before moving)
+
+# --- Final leg check (Daly City → SF) ---
     if state.progress_index == len(LOCATIONS) - 2:
-        start = state.current_location
-        end = LOCATIONS[state.progress_index + 1]
+        if state.fuel < fuel_needed:
+            print("⛽ Not enough fuel to make it to San Francisco.")
+            print("😭 The journey ends here.")
 
-        distance = get_distance(start, end)
-        weather = get_weather(start, end)
+            state.is_over = True
+            state.win = False
+            return
 
-        fuel_needed = int(round((distance / 2.5) * float(weather["fuel_multiplier"])))
-
-    if state.fuel < fuel_needed:
-        print("⛽ Not enough fuel to make it to San Francisco.")
-
-        # --- simulate max possible recovery ---
-        max_possible_fuel = state.fuel
-
-        if state.cash >= 40:
-            max_possible_fuel += 25
-        elif state.cash >= 12:
-            max_possible_fuel += 10
 
         # 🚨 If STILL not enough → game over
         if max_possible_fuel < fuel_needed:
