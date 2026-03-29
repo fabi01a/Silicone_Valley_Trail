@@ -163,15 +163,17 @@ def get_distance(start: str, end: str) -> int:
 EventEffect = Callable[[GameState], str]
 
 def _event_debug_breakthrough(state: GameState) -> str:
-    state.bugs = max(0, state.bugs - 2)
-    state.morale += 2
+    state.bugs = max(0, state.bugs - 4)
+    state.morale += 3
     return "💡 Breakthrough! A tricky bug gets resolved cleanly 🛜" 
 
-def _event_travel_roadwork(state: GameState) -> str:
-    state.fuel -= 15
-    state.morale -= 1
-    state.bugs += 1
-    return "🚧 Roadwork slowed you down. Fuel and morale take a hit ⬇️"
+def _event_debug_nothing(state: GameState) -> str:
+    return "😐 You stare at the code... nothing stands out."
+
+def _event_debug_standard(state: GameState) -> str:
+    state.bugs = max(0, state.bugs - 3)
+    state.morale -= 5
+    state.cash -= 5
 
 def _event_rest_mentor_call(state: GameState) -> str:
     state.morale += 8
@@ -184,6 +186,12 @@ def _event_rest_beta_users(state: GameState) -> str:
     state.bugs += 2  # feedback introduces new issues
     return "🗣️ Beta users give feedback. Morale spikes, but new bugs appear 👾"
 
+def _event_travel_roadwork(state: GameState) -> str:
+    state.fuel -= 15
+    state.morale -= 1
+    state.bugs += 1
+    return "🚧 Roadwork slowed you down. Fuel and morale take a hit ⬇️"
+
 def _event_travel_flat_tire(state: GameState) -> str:
     state.fuel -= 10
     state.cash -= 10
@@ -192,15 +200,15 @@ def _event_travel_flat_tire(state: GameState) -> str:
 
 def _event_travel_hackathon(state: GameState) -> str:
     if random.random() < 0.6:
-        state.cash += 25
-        state.morale += 3
+        state.cash += 30   # ⬅️ increase from 25
+        state.morale += 4
         state.bugs += 2
-        return "💻 Hackathon win! Big gains, but new bugs introduced 👾"
+        return "💻 Hackathon win! You secure funding, but introduce new bugs 👾"
     else:
-        state.morale -= 4
+        state.morale -= 5
         state.cash -= 10
         return "😓 Hackathon flop. Time wasted and morale drops 😩"
-
+        
 def _event_travel_supply_drop(state: GameState) -> str:
     state.cash += 15
     state.fuel += 20
@@ -223,6 +231,8 @@ EVENTS: List[Dict[str, object]] = [
     
     {"name": "Breakthrough", "applies_to": {"debug"}, "effect": _event_debug_breakthrough, "weight": 2},
     {"name": "Nothing Happens", "applies_to": {"travel"}, "effect": _event_travel_nothing, "weight": 1},
+    {"name": "Standard Debug", "applies_to": {"debug"}, "effect": _event_debug_standard, "weight": 3},
+    {"name": "Breakthrough", "applies_to": {"debug"}, "effect": _event_debug_breakthrough, "weight": 1},    
 
     #Rest events
     {"name": "Mentor Call", "applies_to": {"rest"}, "effect": _event_rest_mentor_call, "weight": 2},
@@ -421,26 +431,16 @@ def rest(state: GameState) -> None:
 
 
 def debug(state: GameState) -> None:
-    """Reduce bugs at the cost of morale and some cash."""
+    """Attempt to fix bugs with different possible outcomes."""
 
-    # 🚫 Guard: no bugs
     if state.bugs == 0:
         print("🧐 The codebase is clean. Nothing to debug right now.")
         return
 
-    # 🚫 Guard: can't afford
     if state.cash < 5 or state.morale <= 5:
         print("⚠️ You can't afford to debug right now. Choose another action.")
         return
 
-    # Base debug action
-    state.bugs = max(0, state.bugs - 3)
-    state.morale -= 5
-    state.cash -= 5
-
-    print("🙆🏻‍♂️ Gilfoyle cleans up the codebase. Bugs decrease, but morale takes a hit 📉")
-
-    # Event variation still applies
     trigger_random_event(state, action="debug")
 
 
@@ -484,15 +484,15 @@ def show_player_status(state: GameState) -> None:
     print("\n=== Silicon Valley Trail ===")
     print(f"Day: {state.day}")
     print(f"Location: {state.current_location}")
-    print(f"Cash: {state.cash} | Fuel: {state.fuel} | Morale: {state.morale} | Bugs: {state.bugs}")
+    print(f"💵 Cash: {state.cash} | ⛽️ Fuel: {state.fuel} | 🥳 Morale: {state.morale} | 👾 Bugs: {state.bugs}")
 
 
 def prompt_action() -> str:
     """Ask the player what to do this day."""
     print("\nChoose an action:")
-    print("1) travel  - move to the next location")
-    print("2) rest    - recover morale and refuel a bit")
-    print("3) debug   - fix bugs but costs morale")
+    print("1) 🚗 travel  - move to the next location")
+    print("2) 🥱 rest    - recover morale and refuel a bit")
+    print("3) ⌨️ debug   - fix bugs but costs morale")
     choice = input("> ").strip().lower()
 
     if choice in {"1", "travel", "t"}:
