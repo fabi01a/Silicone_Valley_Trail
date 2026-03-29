@@ -44,7 +44,6 @@ CITY_COORDS = {
 
 COSTCO_LOCATIONS = {
     "Santa Clara",
-    "San Mateo",
     "Daly City",
 }
 
@@ -87,6 +86,7 @@ class GameState:
         self.progress_index = max(0, min(self.progress_index, len(LOCATIONS) - 1))
         self.current_location = LOCATIONS[self.progress_index]
 
+
 def handle_costco_stop(state: GameState) -> None:
     print(term.chartreuse("\n🛒 You spot a Costco nearby... bulk deals await 👀"))
 
@@ -99,7 +99,7 @@ def handle_costco_stop(state: GameState) -> None:
     print()
 
     while choice not in {"y", "n"}:
-        print("⚠️ Please enter 'y' or 'n'.")
+        print("⚠️ Please enter 'y' or 'n' ⚠️")
         choice = input("Do you want to stop and restock? (y/n): ").strip().lower()
 
     if choice != "y":
@@ -138,16 +138,14 @@ def handle_costco_stop(state: GameState) -> None:
 def handle_final_pitch(state: GameState) -> None:
     print("\n🎤 You’ve made it to Demo Day 🙌\n")
 
-    # ❌ Morale too low
     if state.morale < 40:
         print("😬 Your team isn't ready to present. Morale is too low 😖")
         state.is_over = True
         state.win = False
         return
 
-    # ❌ TOO MANY BUGS → block presentation
-    if state.bugs >= 8:
-        print("💥 Your product is too unstable to demo. There are too many bugs 🕸️")
+    if state.bugs >= 5:
+        print("💥 Your product is too unstable to demo. There are too many bugs 📯")
         print("📢 You should have debugged more before arriving 😖")
         state.is_over = True
         state.win = False
@@ -156,9 +154,9 @@ def handle_final_pitch(state: GameState) -> None:
     choice = input("Are you ready to present? (y/n): ").strip().lower()
 
     while choice not in {"y", "n"}:
-        print("⚠️ Please enter 'y' or 'n'.")
+        print("⚠️ Please enter 'y' or 'n' ⚠️")
+        choice = input("Are you ready to present? (y/n): ").strip().lower()
 
-    choice = input("Do you want to take this opportunity? (y/n): ").strip().lower()
     if choice != "y":
         print("🧠 You hesitate too long... the opportunity passes you by 🎺")
         state.is_over = True
@@ -170,8 +168,6 @@ def handle_final_pitch(state: GameState) -> None:
 
 
 # --- 3) "API" placeholders (mock data for now) ---
-import requests
-import random
 
 def get_weather(start: str, end: str) -> dict:
     """Fetch real weather data based on current location."""
@@ -200,7 +196,10 @@ def get_weather(start: str, end: str) -> dict:
         elif 55 <= temp_f <= 70:
             condition = "rain"
         else:
-            condition = "clear"
+            condition = random.choices(
+                ["clear", "rain", "fog"],
+                weights=[0.5, 0.25, 0.25]
+            )[0]
 
     except Exception:
         # fallback (required)
@@ -251,19 +250,19 @@ def _event_debug_breakthrough(state: GameState) -> str:
     return "💡 Breakthrough! A tricky bug gets resolved cleanly 🛜" 
 
 def _event_debug_nothing(state: GameState) -> str:
-    return "😐 You stare at the code... nothing stands out."
+    return "😐 You stare at the code... nothing stands out 😑"
 
 def _event_debug_standard(state: GameState) -> str:
     state.bugs = max(0, state.bugs - 3)
     state.morale -= 5
     state.cash -= 5
-    return "🔄 Gilfoyle cleans up the codebase. Bugs decrease, but morale takes a hit 📉"
+    return "☄️ Gilfoyle cleans up the codebase. Bugs decrease, but morale takes a hit 📉"
 
 def _event_rest_mentor_call(state: GameState) -> str:
     state.morale += 8
     state.bugs = max(0, state.bugs - 2)
     state.cash -= 10  # paying for someone’s time / perks
-    return "🤖 A mentor schedules time with your crew. Bugs drop; morale rises ↪️"
+    return "🤖 A mentor schedules time with your crew. Bugs drop, morale rises 🎂"
 
 def _event_rest_beta_users(state: GameState) -> str:
     state.morale += 2
@@ -273,7 +272,7 @@ def _event_rest_beta_users(state: GameState) -> str:
 def _event_travel_roadwork(state: GameState) -> str:
     state.fuel -= 15
     state.morale -= 1
-    state.bugs += 1
+    state.bugs += 2
     return "🚧 Roadwork slowed you down. Fuel and morale take a hit ⬇️"
 
 def _event_travel_flat_tire(state: GameState) -> str:
@@ -286,8 +285,8 @@ def _event_travel_hackathon(state: GameState) -> str:
     if random.random() < 0.6:
         state.cash += 30   # ⬅️ increase from 25
         state.morale += 4
-        state.bugs += 2
-        return "💻 Hackathon win! You secure funding, but introduce new bugs 🥲"
+        state.bugs += 3
+        return "⭐️ Hackathon win! You secure funding, but introduce new bugs 🥲"
     else:
         state.morale -= 5
         state.cash -= 10
@@ -299,7 +298,7 @@ def _event_travel_supply_drop(state: GameState) -> str:
     state.morale += 5
     state.bugs = max(0, state.bugs - 1)
 
-    return "✈️ A passing plane drops supplies! The team catches a lucky break 🎁"
+    return "✈️ A passing Pied Piper Plane drops supplies! The team catches a lucky break 🎁"
 
 def _event_travel_nothing(state: GameState) -> str:
     return "🙂 Nothing unusual happens today 🙃"
@@ -346,27 +345,23 @@ def trigger_random_event(state: GameState, action: str) -> str:
         choice = input("Do you want to take this opportunity? (y/n): ").strip().lower()
 
         while choice not in {"y", "n"}:
-            print("⚠️ Please enter 'y' or 'n'.")
+            print("⚠️ Please enter 'y' or 'n' ⚠️")
             choice = input("Do you want to take this opportunity? (y/n): ").strip().lower()
 
         if choice != "y":
-            print("🤨 You passed on the opportunity. The day continues smoothly 😀")
+            print("😶 You passed on the opportunity. The day continues smoothly 😀")
             return ""
 
-    # Capture state BEFORE event
-    before = {
-        "fuel": state.fuel,
-        "cash": state.cash,
-        "morale": state.morale,
-        "bugs": state.bugs,
-    }
-
     # Apply event
-    effect: EventEffect = event["effect"]  # type: ignore[assignment]
+    effect: EventEffect = event["effect"]
+
     message = effect(state)
 
+    # AFTER
+    after_bugs = state.bugs
+
     # Print event message
-    print("\n" + message)
+    print(message)
 
     # Compute deltas
     delta_fuel = state.fuel - before["fuel"]
@@ -427,7 +422,6 @@ def check_end_conditions(state: GameState) -> None:
 # --- 6) Action functions ---
 def travel(state: GameState) -> None:
     """Move the team to the next location and update resources."""
-
     # Already at destination
     if state.progress_index >= len(LOCATIONS) - 1:
         return
@@ -435,6 +429,7 @@ def travel(state: GameState) -> None:
     # --- Determine next leg ---
     start = state.current_location
     end = LOCATIONS[state.progress_index + 1]
+    prev_location = start
 
     distance = get_distance(start, end)
     weather = get_weather(start, end)
@@ -442,46 +437,49 @@ def travel(state: GameState) -> None:
     fuel_needed = int(round((distance / 2.5) * float(weather["fuel_multiplier"])))
     condition = weather["condition"]
     # --- Final leg check (Daly City → SF) ---
+    # Final leg check (before moving)
     if state.progress_index == len(LOCATIONS) - 2:
-        if state.fuel < fuel_needed:
-            print("⛽ Not enough fuel to make it to San Francisco.")
+        start = state.current_location
+        end = LOCATIONS[state.progress_index + 1]
 
-            # --- simulate max possible recovery ---
-            max_possible_fuel = state.fuel
+        distance = get_distance(start, end)
+        weather = get_weather(start, end)
 
-            # if they can afford Costco
-            if state.cash >= 40:
-                max_possible_fuel += 25
+        fuel_needed = int(round((distance / 2.5) * float(weather["fuel_multiplier"])))
 
-            # else if they can afford rest
-            elif state.cash >= 12:
-                max_possible_fuel += 10  # whatever your rest gives
+    if state.fuel < fuel_needed:
+        print("⛽ Not enough fuel to make it to San Francisco.")
 
-            # 🚨 If STILL not enough → game over
-            if max_possible_fuel < fuel_needed:
-                print("💸 Even with recovery, you can't make it to San Francisco.")
-                print("🚗💨 You're stranded just before the finish line.")
-                state.is_over = True
-                state.win = False
-                return
+        # --- simulate max possible recovery ---
+        max_possible_fuel = state.fuel
 
-            print("🚨 You need to refuel before continuing 😵‍💫")
+        if state.cash >= 40:
+            max_possible_fuel += 25
+        elif state.cash >= 12:
+            max_possible_fuel += 10
+
+        # 🚨 If STILL not enough → game over
+        if max_possible_fuel < fuel_needed:
+            print("💸 Even with recovery, you can't make it to San Francisco.")
+            print("🚗💨 You're stranded just before the finish line.")
+            state.is_over = True
+            state.win = False
             return
+
+        print("🚨 You need to refuel before continuing 😵")
+        
 
     # --- Weather effects ---
     if condition == "rain":
-        state.bugs += 2
         state.morale -= 2
         print("🌧️ Rain slows the team. Bugs increase and morale dips 😟")
 
     elif condition == "heat":
-        state.bugs += 3
         state.morale -= 4
         state.fuel -= 10
         print("🥵 Heatwave hits. The team struggles and bugs pile up 😫")
 
     elif condition == "fog":
-        state.bugs += 1
         state.morale -= 1
         print("🌫️  Fog causes confusion. Minor bugs introduced 😕")
 
@@ -508,8 +506,8 @@ def travel(state: GameState) -> None:
     state.sync_location()
 
     # --- Final stretch message (UI only) ---
-    if state.progress_index == len(LOCATIONS) - 3:
-        print(term.yellow("\n⏳ Final stretch ahead. Prepare wisely.\n"))
+    if state.current_location == "San Mateo" and prev_location != "San Mateo":
+        print(term.yellow("\n⏳ Final stretch ahead. Prepare wisely 😬\n"))
 
     # --- Costco opportunity ---
     if (
@@ -522,7 +520,7 @@ def travel(state: GameState) -> None:
     # --- Arrival at SF ---
     if state.current_location == "San Francisco":
         state.day += 1
-        print(f"\n📍 Day {state.day} — You’ve arrived in San Francisco. Time for Demo Day 🤞🏾\n")
+        print(f"\n📍 Day {state.day} — You’ve arrived in San Francisco 🌉 Time for Demo Day 🤗\n")
         handle_final_pitch(state)
         return
 
@@ -553,7 +551,7 @@ def debug(state: GameState) -> None:
         return
 
     if state.cash < 5 or state.morale <= 5:
-        print("⚠️ You can't afford to debug right now. Choose another action.")
+        print("⚠️ You can't afford to debug right now. Choose another action 🤨")
         return
 
     trigger_random_event(state, action="debug")
@@ -576,7 +574,7 @@ def final_pitch(state: GameState) -> bool:
 
     # bugs impact HARD FAIL
     if state.bugs >= 8:
-        print("💥 Too many bugs. The demo crashes instantly ⬇️")
+        print("💥 Too many bugs. The demo crashes instantly 🌋")
         return False
 
     # bugs impact SOFT PENALTY
@@ -586,10 +584,10 @@ def final_pitch(state: GameState) -> bool:
 
 
     if random.random() < success_chance:
-        print("🚀 The demo is flawless. Investors are impressed 💰")
+        print("🚀 The demo is flawless! Investors are impressed 💰 Funding is coming your way! 🤑")
         return True
     else:
-        print("💥 The demo crashes. The room goes silent ⬇️")
+        print("💥 The demo crashes 😖 The room goes silent 🦗")
         return False
 
 
@@ -608,7 +606,7 @@ def prompt_action() -> str:
     print(term.green3("\nChoose an action:"))
     print("1) 🚗 travel  - move to the next location")
     print("2) 🥱 rest    - recover morale and refuel a bit")
-    print("3) ⌨️  debug   - fix bugs but costs morale")
+    print("3) ⚡️ debug   - fix bugs but costs morale")
     print()
     choice = input(term.green3("> ")).strip().lower()
     print()
@@ -662,7 +660,7 @@ def game_loop(start_cash: int = 100, start_fuel: int = 100, start_morale: int = 
     # Final result.
     print(term.green3("\n=== Game Over ==="))
     if state.win:
-        print(term.yellow("🙌 You reached San Francisco and killed the presentation!!! The future is yours 🔮"))
+        print(term.yellow("🙌 You reached San Francisco, met with investors and secured funding!!! The future is yours 🔮"))
     else:
         print(" 🚗💨 Your run ended. One more iteration and you'll make it 🍀")
 
