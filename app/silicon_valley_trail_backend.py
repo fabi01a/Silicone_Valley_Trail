@@ -25,6 +25,7 @@ LOCATIONS = [
     "Santa Clara",
     "Palo Alto",
     "Redwood City",
+    "San Carlos"
     "Mountain View",
     "San Mateo",
     "Daly City",
@@ -47,11 +48,19 @@ COSTCO_LOCATIONS = {
     "Daly City",
 }
 
+RESTAURANT_LOCATIONS = {
+    "Palo Alto",
+    "Mountain View",
+}
+
 def _last_location() -> str:
     return LOCATIONS[-1]
 
 def is_costco_location(location:str) -> bool:
     return location in COSTCO_LOCATIONS
+
+def is_restaurant_location(location: str) -> bool:
+    return location in RESTAURANT_LOCATIONS
 
 # --- 2) Game State ---
 @dataclass
@@ -69,6 +78,7 @@ class GameState:
     current_location: str = LOCATIONS[0]
     progress_index: int = 0
     visited_costco: set[str] = field(default_factory=set)
+    visited_restaurants: set[str] = field(default_factory=set)
 
     cash: int = 100
     fuel: int = 100
@@ -124,6 +134,48 @@ def handle_costco_stop(state: GameState) -> None:
     changes = []
     if state.fuel != before["fuel"]:
         changes.append(f"⛽️ Fuel: {state.fuel - before['fuel']:+}")
+    if state.cash != before["cash"]:
+        changes.append(f"💵 Cash: {state.cash - before['cash']:+}")
+    if state.morale != before["morale"]:
+        changes.append(f"🥳 Morale: {state.morale - before['morale']:+}")
+    if state.bugs != before["bugs"]:
+        changes.append(f"👾 Bugs: {state.bugs - before['bugs']:+}")
+
+    if changes:
+        print("📊 Changes → " + " | ".join(changes))
+
+
+def handle_restaurant_stop(state: GameState) -> None:
+    print(term.yellow("\n🍽️ Oh Look - its a 🌭 Not Hotdogs 🥤 — a team favorite 😋"))
+
+    if state.cash < 20:
+        print(term.firebrick3("💸 Not enough cash for a proper meal 😩"))
+        return
+
+    choice = input("Wanna grab a team meal at 🌭 Not Hotdogs 🥤? (y/n): ").strip().lower()
+
+    while choice not in {"y", "n"}:
+        print("⚠️ Please enter 'y' or 'n' ⚠️")
+        choice = input("Grab a team meal at 🌭 Not Hotdogs 🥤? (y/n): ").strip().lower()
+
+    if choice != "y":
+        print("✋ You skip the meal and keep moving 🏃💨")
+        return
+
+    before = {
+        "cash": state.cash,
+        "morale": state.morale,
+        "bugs": state.bugs,
+    }
+
+    state.cash -= 20
+    state.morale += 12
+    state.bugs = max(0, state.bugs - 1)
+
+    print("\n🐷 The team eats well. Spirits are high 😊")
+
+    changes = []
+
     if state.cash != before["cash"]:
         changes.append(f"💵 Cash: {state.cash - before['cash']:+}")
     if state.morale != before["morale"]:
@@ -513,6 +565,14 @@ def travel(state: GameState) -> None:
     ):
         handle_costco_stop(state)
         state.visited_costco.add(state.current_location)
+    
+    # --- Restaurant opportunity ---
+    if (
+        is_restaurant_location(state.current_location)
+        and state.current_location not in state.visited_restaurants
+    ):
+        handle_restaurant_stop(state)
+        state.visited_restaurants.add(state.current_location)
 
     # --- Arrival at SF ---
     if state.current_location == "San Francisco":
