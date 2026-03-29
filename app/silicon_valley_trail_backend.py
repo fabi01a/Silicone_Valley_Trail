@@ -10,9 +10,11 @@ This file is intentionally self-contained for now:
 from __future__ import annotations
 
 import random
+import requests
 from blessed import Terminal
 from dataclasses import dataclass, field
 from typing import Callable, Dict, List
+
 
 term = Terminal()
 
@@ -28,6 +30,17 @@ LOCATIONS = [
     "Daly City",
     "San Francisco",
 ]
+
+CITY_COORDS = {
+    "San Jose": (37.3382, -121.8863),
+    "Santa Clara": (37.3541, -121.9552),
+    "Palo Alto": (37.4419, -122.1430),
+    "Redwood City": (37.4852, -122.2364),
+    "Mountain View": (37.3861, -122.0839),
+    "San Mateo": (37.5630, -122.3255),
+    "Daly City": (37.6879, -122.4702),
+    "San Francisco": (37.7749, -122.4194),
+}
 
 COSTCO_LOCATIONS = {
     "Santa Clara",
@@ -87,16 +100,11 @@ def handle_costco_stop(state: GameState) -> None:
 
     while choice not in {"y", "n"}:
         print("⚠️ Please enter 'y' or 'n'.")
-        choice = input("Do you want to take this opportunity? (y/n): ").strip().lower()
-    
-    if choice not in {"y", "n"}:
-        print("⚠️ Please enter 'y' or 'n'.")
-        return
+        choice = input("Do you want to stop and restock? (y/n): ").strip().lower()
 
     if choice != "y":
         print("🚗 You skip Costco and stay focused on the journey 👏")
         return
-
     # Apply tradeoff
     before = {
         "fuel": state.fuel,
@@ -166,34 +174,36 @@ import requests
 import random
 
 def get_weather(start: str, end: str) -> dict:
-    """Fetch real weather data (fallback to mock if API fails)."""
+    """Fetch real weather data based on current location."""
 
     try:
-        # Example: using SF coords for simplicity (fast + acceptable tradeoff)
+        lat, lon = CITY_COORDS.get(start, (37.7749, -122.4194))
+
         url = "https://api.open-meteo.com/v1/forecast"
         params = {
-            "latitude": 37.7749,
-            "longitude": -122.4194,
+            "latitude": lat,
+            "longitude": lon,
             "current_weather": True
         }
 
         response = requests.get(url, params=params, timeout=2)
         data = response.json()
 
-        temp = data["current_weather"]["temperature"]
+        temp_c = data["current_weather"]["temperature"]
+        temp_f = (temp_c * 9/5) + 32
 
-        # Map temperature → game conditions
-        if temp < 55:
+        # 🌤️ Map to game conditions
+        if temp_f < 55:
             condition = "fog"
-        elif temp > 80:
+        elif temp_f > 85:
             condition = "heat"
-        elif random.random() < 0.3:
+        elif 55 <= temp_f <= 70:
             condition = "rain"
         else:
             condition = "clear"
 
     except Exception:
-        # 🔁 fallback (REQUIRED by spec)
+        # fallback (required)
         condition = random.choice(["clear", "rain", "fog", "heat"])
 
     return {
@@ -340,7 +350,7 @@ def trigger_random_event(state: GameState, action: str) -> str:
             choice = input("Do you want to take this opportunity? (y/n): ").strip().lower()
 
         if choice != "y":
-            print("🙂‍↔️ You passed on the opportunity. The day continues smoothly 😀")
+            print("🤨 You passed on the opportunity. The day continues smoothly 😀")
             return ""
 
     # Capture state BEFORE event
@@ -431,7 +441,6 @@ def travel(state: GameState) -> None:
 
     fuel_needed = int(round((distance / 2.5) * float(weather["fuel_multiplier"])))
     condition = weather["condition"]
-
     # --- Final leg check (Daly City → SF) ---
     if state.progress_index == len(LOCATIONS) - 2:
         if state.fuel < fuel_needed:
