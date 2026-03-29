@@ -10,9 +10,11 @@ This file is intentionally self-contained for now:
 from __future__ import annotations
 
 import random
+from blessed import Terminal
 from dataclasses import dataclass
 from typing import Callable, Dict, List
 
+term = Terminal()
 
 # --- 1) Map / Locations ---
 # Each turn (day), the player can move forward along this route.
@@ -74,17 +76,17 @@ class GameState:
         self.current_location = LOCATIONS[self.progress_index]
 
 def handle_costco_stop(state: GameState) -> None:
-    print("\n🛒 You spot a Costco nearby... bulk deals await 👀")
+    print(term.chartreuse("\n🛒 You spot a Costco nearby... bulk deals await 👀"))
 
     # Guard: not enough cash
     if state.cash < 40:
-        print("💸 You can't afford a Costco run right now.")
+        print(term.firebrick3("💸 You can't afford a Costco run right now 😩"))
         return
 
     choice = input("Do you want to stop and restock? (y/n): ").strip().lower()
 
     if choice != "y":
-        print("🚗 You skip Costco and stay focused on the journey.")
+        print("🚗 You skip Costco and stay focused on the journey 👏")
         return
 
     # Apply tradeoff
@@ -100,7 +102,7 @@ def handle_costco_stop(state: GameState) -> None:
     state.morale += 8
     state.bugs = max(0, state.bugs - 2)
 
-    print("\n📦 You stock up in bulk. The team feels prepared 💪🏼")
+    print("\n📦 You stock up in bulk. The team feels prepared 💥")
 
     # Show deltas (consistent with your event system)
     changes = []
@@ -122,7 +124,7 @@ def handle_final_pitch(state: GameState) -> None:
 
     # ❌ Morale too low
     if state.morale < 40:
-        print("😬 Your team isn't ready to present. Morale is too low.")
+        print("😬 Your team isn't ready to present. Morale is too low 😖")
         state.is_over = True
         state.win = False
         return
@@ -138,7 +140,7 @@ def handle_final_pitch(state: GameState) -> None:
     choice = input("Are you ready to present? (y/n): ").strip().lower()
 
     if choice != "y":
-        print("🧠 You hesitate too long... the opportunity passes you by.")
+        print("🧠 You hesitate too long... the opportunity passes you by 🎺")
         state.is_over = True
         state.win = False
         return
@@ -234,7 +236,7 @@ def _event_travel_hackathon(state: GameState) -> str:
         state.cash += 30   # ⬅️ increase from 25
         state.morale += 4
         state.bugs += 2
-        return "💻 Hackathon win! You secure funding, but introduce new bugs 👾"
+        return "💻 Hackathon win! You secure funding, but introduce new bugs 🥲"
     else:
         state.morale -= 5
         state.cash -= 10
@@ -289,7 +291,7 @@ def trigger_random_event(state: GameState, action: str) -> str:
 
     # Handle optional events
     if event.get("optional", False):
-        print(f"\n⚡ Opportunity: {event['name']}")
+        print(term.chartreuse(f"\n⚡Opportunity: {event['name']} ⚡"))
         choice = input("Do you want to take this opportunity? (y/n): ").strip().lower()
 
         if choice != "y":
@@ -340,7 +342,7 @@ def check_end_conditions(state: GameState) -> None:
 
     # Lose conditions
     if state.cash <= 0:
-        print("💸 You ran out of cash. The startup collapses.")
+        print("💸 You ran out of cash. The startup collapses 😭")
         state.is_over = True
         state.win = False
         return
@@ -479,7 +481,7 @@ def final_pitch(state: GameState) -> bool:
     Final pitch at San Francisco.
     Determines win or loss.
     """
-    print("\n🎤 Final Demo Day Pitch — 🤷🏽‍♂️ Dinesh is presenting...\n")
+    print("\n🎤 Final Demo Day Pitch —  Dinesh is presenting...🙏\n")
 
     success_chance = 0.4
 
@@ -511,19 +513,22 @@ def final_pitch(state: GameState) -> bool:
 # --- 7) Game loop ---
 def show_player_status(state: GameState) -> None:
     """Print the current state to the CLI."""
-    print("\n=== Silicon Valley Trail ===")
+    print()
+    print(term.green3("\n===== Silicon Valley Trail ====="))
     print(f"Day: {state.day}")
-    print(f"Location: {state.current_location}")
+    print(f"{term.green3('Location:')} {term.green3(state.current_location)}")
     print(f"💵 Cash: {state.cash} | ⛽️ Fuel: {state.fuel} | 🥳 Morale: {state.morale} | 👾 Bugs: {state.bugs}")
 
 
 def prompt_action() -> str:
     """Ask the player what to do this day."""
-    print("\nChoose an action:")
+    print(term.green3("\nChoose an action:"))
     print("1) 🚗 travel  - move to the next location")
     print("2) 🥱 rest    - recover morale and refuel a bit")
-    print("3) ⌨️ debug   - fix bugs but costs morale")
-    choice = input("> ").strip().lower()
+    print("3) ⌨️  debug   - fix bugs but costs morale")
+    print()
+    choice = input(term.green3("> ")).strip().lower()
+    print()
 
     if choice in {"1", "travel", "t"}:
         return "travel"
@@ -572,11 +577,11 @@ def game_loop(start_cash: int = 100, start_fuel: int = 100, start_morale: int = 
         check_end_conditions(state)
 
     # Final result.
-    print("\n=== Game Over ===")
+    print(term.green3("\n=== Game Over ==="))
     if state.win:
         print("🙌🏼 You reached San Francisco. The future is yours 🔮")
     else:
-        print(" 🚗💨 Your run ended. One more iteration and you'll make it 🤞🏽")
+        print(" 🚗💨 Your run ended. One more iteration and you'll make it 🍀")
 
 
 if __name__ == "__main__":
