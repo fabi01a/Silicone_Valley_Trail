@@ -162,27 +162,56 @@ def handle_final_pitch(state: GameState) -> None:
 
 
 # --- 3) "API" placeholders (mock data for now) ---
-def get_weather(start: str, end: str) -> Dict[str, str | float]:
-    """
-    Mock weather provider.
-    Returns a simple object that affects travel costs/morale.
-    """
-    # Deterministic-ish choice based on route text, so runs feel stable.
-    seed = sum(ord(c) for c in (start + "->" + end))
-    rng = random.Random(seed)
-    roll = rng.random()
+import requests
+import random
 
-    if roll < 0.2:
-        return {"condition": "fog", "fuel_multiplier": 1.15, "morale_delta": -3}
-    elif roll < 0.4:
-        return {"condition": "rain", "fuel_multiplier": 1.25, "morale_delta": -6}
-    elif roll < 0.6:
-        return {"condition": "heat", "fuel_multiplier": 1.2, "morale_delta": -5}
-    elif roll < 0.75:
-        return {"condition": "wind", "fuel_multiplier": 1.1, "morale_delta": -2}
-    else:
-        return {"condition": "clear", "fuel_multiplier": 1.0, "morale_delta": 1}
+def get_weather(start: str, end: str) -> dict:
+    """Fetch real weather data (fallback to mock if API fails)."""
 
+    try:
+        # Example: using SF coords for simplicity (fast + acceptable tradeoff)
+        url = "https://api.open-meteo.com/v1/forecast"
+        params = {
+            "latitude": 37.7749,
+            "longitude": -122.4194,
+            "current_weather": True
+        }
+
+        response = requests.get(url, params=params, timeout=2)
+        data = response.json()
+
+        temp = data["current_weather"]["temperature"]
+
+        # Map temperature → game conditions
+        if temp < 55:
+            condition = "fog"
+        elif temp > 80:
+            condition = "heat"
+        elif random.random() < 0.3:
+            condition = "rain"
+        else:
+            condition = "clear"
+
+    except Exception:
+        # 🔁 fallback (REQUIRED by spec)
+        condition = random.choice(["clear", "rain", "fog", "heat"])
+
+    return {
+        "condition": condition,
+        "fuel_multiplier": {
+            "clear": 1.0,
+            "rain": 1.2,
+            "fog": 1.1,
+            "heat": 1.3,
+        }[condition],
+        "morale_delta": {
+            "clear": +1,
+            "rain": -2,
+            "fog": -1,
+            "heat": -3,
+        }[condition],
+    }
+    
 
 def get_distance(start: str, end: str) -> int:
     """
