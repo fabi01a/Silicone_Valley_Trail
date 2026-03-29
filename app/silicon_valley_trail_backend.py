@@ -117,6 +117,31 @@ def handle_costco_stop(state: GameState) -> None:
         print("📊 Changes → " + " | ".join(changes))
 
 
+def handle_final_pitch(state: GameState) -> None:
+    print("\n🎤 You’ve made it to Demo Day.\n")
+
+    # ❌ Not ready → immediate loss
+    if state.morale < 40:
+        print("😬 Your team isn't ready to present. Morale is too low.")
+        print("💡 You should prepare more before presenting.")
+
+        state.is_over = True
+        state.win = False
+        return
+
+    # Optional choice (keep this)
+    choice = input("Are you ready to present? (y/n): ").strip().lower()
+
+    if choice != "y":
+        print("🧠 You hesitate too long... the opportunity passes you by.")
+        state.is_over = True
+        state.win = False
+        return
+
+    # ✅ Proceed to pitch
+    state.is_over = True
+    state.win = final_pitch(state)
+    
 # --- 3) "API" placeholders (mock data for now) ---
 def get_weather(start: str, end: str) -> Dict[str, str | float]:
     """
@@ -208,7 +233,7 @@ def _event_travel_hackathon(state: GameState) -> str:
         state.morale -= 5
         state.cash -= 10
         return "😓 Hackathon flop. Time wasted and morale drops 😩"
-        
+
 def _event_travel_supply_drop(state: GameState) -> str:
     state.cash += 15
     state.fuel += 20
@@ -410,9 +435,11 @@ def travel(state: GameState) -> None:
     if state.current_location == "San Francisco":
         state.day += 1
         print(f"\n📍 Day {state.day} — You’ve arrived in San Francisco. Time for Demo Day 🤞🏾\n")
+        handle_final_pitch(state)
         return
 
     # Otherwise trigger event
+    print()
     trigger_random_event(state, action="travel")
 
 
