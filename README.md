@@ -1,84 +1,149 @@
 🕹️ Silicon Valley Trail
 
-A terminal-based simulation game inspired by The Oregon Trail, where a startup team journeys from San Jose to San Francisco to present at Demo Day.
+A terminal-based simulation game inspired by *The Oregon Trail*, where a startup team journeys from San Jose to San Francisco to present at Demo Day.
 
-Players must manage limited resources, navigate unpredictable events, and make strategic decisions to successfully reach their final pitch.
+Players must manage limited resources, navigate dynamic events, and make strategic decisions to successfully reach their final pitch.
+
+---
 
 🚀 How to Run
+
+```bash
 python app/silicon_valley_trail_backend.py
+```
+
+---
+
 🎯 Objective
 
 Reach San Francisco and successfully deliver your final pitch.
+
+---
 
 🧠 Core Gameplay
 
 Each day, the player chooses an action:
 
-Travel → move forward, consume resources, trigger events
-Rest → recover morale and some fuel
-Debug → reduce bugs but costs morale
+* 🚗 **Travel** → move forward, consume resources, trigger events
+* 🥱 **Rest** → recover morale and some fuel
+* ⚡️ **Debug** → reduce bugs at the cost of morale and cash
+
+---
+
 📊 Resources
 
-Players must manage:
+Players must manage four core resources:
 
-Cash 💵 → used for events and supplies
-Fuel ⛽ → required to travel between locations
-Morale 🥳 → affects team performance
-Bugs 👾 → impacts final pitch success
+* 💵 **Cash** → required for recovery actions and events
+* ⛽️ **Fuel** → required to travel between locations
+* 🥳 **Morale** → affects team readiness and final pitch success
+* 👾 **Bugs** → impacts product stability and demo outcome
+
+---
+
 🌍 Map Progression
 
-San Jose → Palo Alto → Mountain View → Redwood City → San Francisco
+San Jose → Santa Clara → Palo Alto → Redwood City → Mountain View → San Mateo → Daly City → San Francisco
 
-⚡ Events System
-Events are triggered each turn based on action
-Weighted randomness ensures balanced gameplay
-Some events are optional (e.g., Hackathons, Supply Runs)
+*(Additional location planned to expand to 10 total nodes)*
+
+---
+
+⚡ Event System
+
+* Events trigger based on player actions
+* Weighted randomness ensures balanced gameplay
+* Optional events introduce player choice and tradeoffs
 
 Examples:
 
-🚧 Roadwork → reduces fuel and morale
-🛞 Flat tire → costs fuel and cash
-💻 Hackathon → high risk / high reward
-🛒 Supply run → refuel and recover at a cost
-🌦️ Weather System (Mocked)
+* 🚧 Roadwork → fuel loss + bugs increase
+* 🛞 Flat tire → fuel + cash penalty
+* 💻 Hackathon → high risk / high reward
+* ✈️ Supply drop → boosts all resources
 
-Weather impacts gameplay:
+---
 
-Heat → higher fuel usage, morale drop, more bugs
-Rain/Fog → minor penalties
-Clear skies → small morale boost
+🛒 Costco System
 
-Weather data is fetched from Open-Meteo and influences fuel cost, morale, and bug generation. If the API fails, the game falls back to simulated weather conditions.
+* Available at select locations
+* One-time use per location
+* High-cost, high-reward recovery option
 
---->(Designed to integrate with a real weather API)
+---
+
+🌦️ Weather System (API-Driven)
+
+Weather data is fetched from the Open-Meteo API and affects gameplay:
+
+* ☀️ Clear → slight morale boost
+* 🌧️ Rain → morale penalty
+* 🌫️ Fog → minor disruption
+* 🥵 Heat → increased fuel consumption + morale drop
+
+If the API fails, the game falls back to simulated weather conditions.
+
+---
 
 🏁 Win / Lose Conditions
 
-Win:
+### Win:
 
-Reach San Francisco
-Successfully complete final pitch
+* Reach San Francisco
+* Successfully complete the final pitch
 
-Lose:
+### Lose:
 
-Fuel runs out before destination
-Cash or morale collapse
-Too many bugs cause demo failure
+* Run out of fuel
+* Run out of cash
+* Morale reaches zero
+* Too many bugs cause demo failure
+* Unable to reach final destination due to resource constraints
 
-🧪 Testing
------>
-xxxxxxxxcccc
+---
 
-🧠 Design Notes (Draft)
-Focused on resource pressure to create meaningful decisions
-Used weighted randomness to balance event frequency
-Introduced optional events to increase player agency
-Added a final stretch checkpoint to encourage planning before endgame
-Simplified system by removing unnecessary complexity (e.g., hype stat)
+🧪 Testing (Planned)
+
+A test suite will be implemented to validate:
+
+* Resource boundary conditions
+* Travel and event interactions
+* Endgame scenarios and failure states
+
+Testing will be developed using Cursor to ensure reliability and maintainability.
+
+---
+
+🧠 Design Highlights
+
+* Clear separation of systems:
+
+  * Weather = environment effects
+  * Events = team-driven outcomes
+* Focus on meaningful resource tradeoffs
+* Guardrails to prevent soft-lock scenarios
+* Incremental complexity with maintainable structure
+
+---
+
 ⚖️ Tradeoffs
-Kept game loop simple instead of adding complex branching systems
-Used mocked APIs first to ensure reliability and speed of development
-Prioritized gameplay clarity over feature quantity
+
+* Prioritized gameplay clarity over feature bloat
+* Used API fallback to ensure consistent playability
+* Kept architecture simple and readable for extensibility
+
+---
+
 🤖 AI Usage
 
-(Cursor / ChatGPT assisted with ideation, debugging, and structuring logic while maintaining full understanding and ownership of implementation.)
+Tools like Cursor and ChatGPT were used for ideation, debugging, and architectural guidance while maintaining full understanding and ownership of the implementation.
+
+---
+
+🚀 Future Improvements
+
+* Add additional location(s) to expand gameplay
+* Improve balancing of events and resource flow
+* Enhance CLI UI/UX with richer formatting
+* Expand test coverage
+
