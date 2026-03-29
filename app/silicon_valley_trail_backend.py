@@ -211,7 +211,7 @@ def get_weather(start: str, end: str) -> dict:
             "heat": -3,
         }[condition],
     }
-    
+
 
 def get_distance(start: str, end: str) -> int:
     """
@@ -474,7 +474,7 @@ def travel(state: GameState) -> None:
     elif condition == "fog":
         state.bugs += 1
         state.morale -= 1
-        print("🌫️ Fog causes confusion. Minor bugs introduced 😕")
+        print("🌫️  Fog causes confusion. Minor bugs introduced 😕")
 
     else:
         print("🌞 Clear skies. Smooth conditions for the team 😎")
