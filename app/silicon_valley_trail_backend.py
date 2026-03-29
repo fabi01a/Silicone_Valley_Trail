@@ -24,7 +24,7 @@ LOCATIONS = [
     "Mountain View",
     "San Mateo",
     "Redwood City",
-    "Daly City (Costco)",
+    "Daly City",
     "San Francisco",
 ]
 
@@ -96,8 +96,8 @@ def handle_costco_stop(state: GameState) -> None:
     }
 
     state.cash -= 40
-    state.fuel += 35
-    state.morale += 10
+    state.fuel += 25
+    state.morale += 8
     state.bugs = max(0, state.bugs - 2)
 
     print("\n📦 You stock up in bulk. The team feels prepared 💪🏼")
@@ -120,16 +120,21 @@ def handle_costco_stop(state: GameState) -> None:
 def handle_final_pitch(state: GameState) -> None:
     print("\n🎤 You’ve made it to Demo Day.\n")
 
-    # ❌ Not ready → immediate loss
+    # ❌ Morale too low
     if state.morale < 40:
         print("😬 Your team isn't ready to present. Morale is too low.")
-        print("💡 You should prepare more before presenting.")
-
         state.is_over = True
         state.win = False
         return
 
-    # Optional choice (keep this)
+    # ❌ TOO MANY BUGS → block presentation
+    if state.bugs >= 8:
+        print("💥 Your product is too unstable to demo. There are too many bugs.")
+        print("💡 You should have debugged more before arriving.")
+        state.is_over = True
+        state.win = False
+        return
+
     choice = input("Are you ready to present? (y/n): ").strip().lower()
 
     if choice != "y":
@@ -138,10 +143,10 @@ def handle_final_pitch(state: GameState) -> None:
         state.win = False
         return
 
-    # ✅ Proceed to pitch
     state.is_over = True
     state.win = final_pitch(state)
-    
+
+
 # --- 3) "API" placeholders (mock data for now) ---
 def get_weather(start: str, end: str) -> Dict[str, str | float]:
     """
@@ -199,12 +204,13 @@ def _event_debug_standard(state: GameState) -> str:
     state.bugs = max(0, state.bugs - 3)
     state.morale -= 5
     state.cash -= 5
+    return "🧔🏻 Gilfoyle cleans up the codebase. Bugs decrease, but morale takes a hit 📉"
 
 def _event_rest_mentor_call(state: GameState) -> str:
     state.morale += 8
     state.bugs = max(0, state.bugs - 2)
     state.cash -= 10  # paying for someone’s time / perks
-    return "👨🏻‍🎤 A mentor schedules time with your crew. Bugs drop; morale rises 💪🏼"
+    return "🤖 A mentor schedules time with your crew. Bugs drop; morale rises ↪️"
 
 def _event_rest_beta_users(state: GameState) -> str:
     state.morale += 2
@@ -255,14 +261,12 @@ EVENTS: List[Dict[str, object]] = [
     {"name": "Supply Drop", "applies_to": {"travel"}, "effect": _event_travel_supply_drop, "optional": True, "weight": 1},  
     
     {"name": "Breakthrough", "applies_to": {"debug"}, "effect": _event_debug_breakthrough, "weight": 2},
-    {"name": "Nothing Happens", "applies_to": {"travel"}, "effect": _event_travel_nothing, "weight": 1},
     {"name": "Standard Debug", "applies_to": {"debug"}, "effect": _event_debug_standard, "weight": 3},
     {"name": "Breakthrough", "applies_to": {"debug"}, "effect": _event_debug_breakthrough, "weight": 1},    
 
     #Rest events
     {"name": "Mentor Call", "applies_to": {"rest"}, "effect": _event_rest_mentor_call, "weight": 2},
     {"name": "Beta Users", "applies_to": {"rest"}, "effect": _event_rest_beta_users, "weight": 2},
-    {"name": "Nothing Happens", "applies_to": {"travel"}, "effect": _event_travel_nothing, "weight": 1},
 
 ]
 
@@ -305,7 +309,7 @@ def trigger_random_event(state: GameState, action: str) -> str:
     message = effect(state)
 
     # Print event message
-    print(message)
+    print("\n" + message)
 
     # Compute deltas
     delta_fuel = state.fuel - before["fuel"]
@@ -342,25 +346,24 @@ def check_end_conditions(state: GameState) -> None:
         return
     
     if state.cash < 12:
-        print("💸 You can't afford to rest right now.")
+        print("💸 You can't afford to rest right now ☹️")
         return
 
     if state.fuel <= 0:
-        print("⛽ You ran out of fuel. You can't continue the journey.")
+        print("⛽ You ran out of fuel. You can't continue the journey 😭")
         state.is_over = True
         state.win = False
         return
 
     if state.morale <= 0:
-        print("😞 The team loses all morale and quits.")
+        print("😠 The team loses all morale and quits 🚨 ")
         state.is_over = True
         state.win = False
         return
 
     # Reached San Francisco → final pitch
     if state.progress_index >= len(LOCATIONS) - 1:
-        state.is_over = True
-        state.win = final_pitch(state)
+        return
 
 
 # --- 6) Action functions ---
@@ -374,7 +377,7 @@ def travel(state: GameState) -> None:
     # Final leg check (before moving)
     if state.progress_index == len(LOCATIONS) - 2:
         if state.fuel < 25:
-            print("⛽ Not enough fuel to make it to San Francisco. You need to refuel.")
+            print("⛽ Not enough fuel to make it to San Francisco. You need to refuel 😩")
             return
 
     start = state.current_location
@@ -434,7 +437,7 @@ def travel(state: GameState) -> None:
     # Arrival at SF
     if state.current_location == "San Francisco":
         state.day += 1
-        print(f"\n📍 Day {state.day} — You’ve arrived in San Francisco. Time for Demo Day 🤞🏾\n")
+        print(f"\n📍 Day {state.day} — You’ve arrived in San Francisco. Time for Demo Day 🍀\n")
         handle_final_pitch(state)
         return
 
@@ -461,7 +464,7 @@ def debug(state: GameState) -> None:
     """Attempt to fix bugs with different possible outcomes."""
 
     if state.bugs == 0:
-        print("🧐 The codebase is clean. Nothing to debug right now.")
+        print("🧐 The codebase is clean. Nothing to debug right now 🎺")
         return
 
     if state.cash < 5 or state.morale <= 5:
