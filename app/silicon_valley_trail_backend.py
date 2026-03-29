@@ -157,8 +157,8 @@ EVENTS: List[Dict[str, object]] = [
     {"name": "Roadwork Delay", "applies_to": {"travel"}, "effect": _event_travel_roadwork, "weight": 3},
     {"name": "Flat Tire", "applies_to": {"travel"}, "effect": _event_travel_flat_tire, "weight": 2},
     {"name": "Nothing Happens", "applies_to": {"travel"}, "effect": _event_travel_nothing, "weight": 1},
-    {"name": "Hackathon", "applies_to": {"travel"}, "effect": _event_travel_hackathon, "optional": True, "weight": 1},
-    {"name": "Supply Run", "applies_to": {"travel"}, "effect": _event_travel_supply_run, "optional": True, "weight": 1},  
+    {"name": "Hackathon", "applies_to": {"travel"}, "effect": _event_travel_hackathon, "optional": True, "weight": 2},
+    {"name": "Supply Run", "applies_to": {"travel"}, "effect": _event_travel_supply_run, "optional": True, "weight": 2},  
     
     #Rest events
     {"name": "Mentor Call", "applies_to": {"rest"}, "effect": _event_rest_mentor_call, "weight": 2},
@@ -172,27 +172,65 @@ def trigger_random_event(state: GameState, action: str) -> str:
     """
     Randomly selects an event from a list.
     Optional events can be accepted or skipped by the player.
+    Also prints resource changes for clarity.
     """
     eligible = [e for e in EVENTS if action in e["applies_to"]]
-    if not eligible:
-        return  "😐 Nothing unusual happens today 🙃"
 
+    if not eligible:
+        print("😐 Nothing unusual happens today 🙃")
+        return ""
+
+    # Weighted selection
     weights = [e.get("weight", 1) for e in eligible]
     event = random.choices(eligible, weights=weights, k=1)[0]
 
-    # Check if event is optional
-    is_optional = event.get("optional", False)
-
-    if is_optional:
+    # Handle optional events
+    if event.get("optional", False):
         print(f"\n⚡ Opportunity: {event['name']}")
         choice = input("Do you want to take this opportunity? (y/n): ").strip().lower()
 
         if choice != "y":
-            return "🙂‍↔️ You passed on the opportunity. The day continues smoothly 😀"
+            print("🙂‍↔️ You passed on the opportunity. The day continues smoothly 😀")
+            return ""
 
-    # Apply event effect
+    # Capture state BEFORE event
+    before = {
+        "fuel": state.fuel,
+        "cash": state.cash,
+        "morale": state.morale,
+        "bugs": state.bugs,
+    }
+
+    # Apply event
     effect: EventEffect = event["effect"]  # type: ignore[assignment]
-    return effect(state)
+    message = effect(state)
+
+    # Print event message
+    print(message)
+
+    # Compute deltas
+    delta_fuel = state.fuel - before["fuel"]
+    delta_cash = state.cash - before["cash"]
+    delta_morale = state.morale - before["morale"]
+    delta_bugs = state.bugs - before["bugs"]
+
+    # Only show changes if something changed
+    changes = []
+
+    if delta_fuel != 0:
+        changes.append(f"⛽️ Fuel: {delta_fuel:+}")
+    if delta_cash != 0:
+        changes.append(f"💵 Cash: {delta_cash:+}")
+    if delta_morale != 0:
+        changes.append(f"🥳 Morale: {delta_morale:+}")
+    if delta_bugs != 0:
+        changes.append(f"👾 Bugs: {delta_bugs:+}")
+
+    if changes:
+        print("📊 Changes → " + " | ".join(changes))
+
+    return ""
+
     
 # --- 5) Win/Lose conditions ---
 def check_end_conditions(state: GameState) -> None:
@@ -213,9 +251,16 @@ def check_end_conditions(state: GameState) -> None:
 # --- 6) Action functions ---
 def travel(state: GameState) -> None:
     """Move the team to the next location and update resources."""
+
+    # Already at destination
     if state.progress_index >= len(LOCATIONS) - 1:
-        # Already at destination.
         return
+
+    # Final leg check (before moving)
+    if state.progress_index == len(LOCATIONS) - 2:
+        if state.fuel < 25:
+            print("⛽ Not enough fuel to make it to San Francisco. You need to refuel.")
+            return
 
     start = state.current_location
     end = LOCATIONS[state.progress_index + 1]
@@ -224,6 +269,7 @@ def travel(state: GameState) -> None:
     weather = get_weather(start, end)
     condition = weather["condition"]
 
+    # Weather effects
     if condition == "rain":
         state.bugs += 2
         state.morale -= 2
@@ -232,47 +278,52 @@ def travel(state: GameState) -> None:
     elif condition == "heat":
         state.bugs += 3
         state.morale -= 4
-        state.fuel -= 8
+        state.fuel -= 10
         print("🥵 Heatwave hits. The team struggles and bugs pile up 😫")
 
     elif condition == "fog":
         state.bugs += 1
         state.morale -= 1
         print("🌫️ Fog causes confusion. Minor bugs introduced 😕")
-    
+
     else:
         print("🌞 Clear skies. Smooth conditions for the team 😎")
-   
-    # Core travel costs:
-    # - Fuel cost scales with distance.
-    # - Morale can drop if weather is bad.
-    fuel_cost = int(round((distance / 3) * float(weather["fuel_multiplier"])))
+
+    # Fuel cost
+    fuel_cost = int(round((distance / 2.5) * float(weather["fuel_multiplier"])))
     state.fuel -= fuel_cost
+    print(f"🚗 Fuel cost: {fuel_cost} | ⛽️ Fuel remaining: {state.fuel}")
+
+    # Morale adjustment
     state.morale += int(weather["morale_delta"])
 
-    # Travel also costs money (food, commuting, logistics).
+    # Travel cost
     state.cash -= max(3, int(distance / 8))
 
-    # Move forward one step along the map.
+    # Move forward
     state.progress_index += 1
     state.sync_location()
 
-# If we've reached San Francisco, advance the day before announcing arrival
+    if state.current_location == "Redwood City":
+        if state.fuel < 30:
+            print("⛽ Fuel is low. Consider refueling before the final leg ⚠️")
+        print("\n⏳ Final stretch ahead. Fuel and morale will be tested. Prepare wisely 🙌🏼\n")
+    
+    # Arrival at SF
     if state.current_location == "San Francisco":
-        state.day += 1  # 👈 move to next day for Demo Day
+        state.day += 1
         print(f"\n📍 Day {state.day} — You’ve arrived in San Francisco. Time for Demo Day 🤞🏾\n")
         return
 
     # Otherwise trigger event
-    message = trigger_random_event(state, action="travel")
-    print(message)
+    trigger_random_event(state, action="travel")
 
 
 def rest(state: GameState) -> None:
     """Rest the team to recover morale and reduce bugs."""
     # Rest helps morale, slightly refuels, and helps with bugs.
     state.morale += 10
-    state.fuel += 10
+    state.fuel += 6
     state.bugs = max(0, state.bugs - 1)
 
     # Resting is not free.
@@ -288,7 +339,7 @@ def debug(state: GameState) -> None:
     state.morale -= 5
     state.cash -= 5
 
-    print(" 🙆🏻‍♂️ Gilfoyle cleans up the codebase. Bugs decrease, but morale takes a hit 📉")
+    print("🙆🏻‍♂️ Gilfoyle cleans up the codebase. Bugs decrease, but morale takes a hit 📉")
 
     message = trigger_random_event(state, action="debug")
     print(message)
@@ -299,7 +350,7 @@ def final_pitch(state: GameState) -> bool:
     Final pitch at San Francisco.
     Determines win or loss.
     """
-    print("\n🎤 Final Demo Day Pitch — 🙎🏾‍♂️ Dinesh is presenting...\n")
+    print("\n🎤 Final Demo Day Pitch — 🤷🏽‍♂️ Dinesh is presenting...\n")
 
     success_chance = 0.4
 
@@ -334,7 +385,7 @@ def show_player_status(state: GameState) -> None:
     print("\n=== Silicon Valley Trail ===")
     print(f"Day: {state.day}")
     print(f"Location: {state.current_location}")
-    print(f"Cash: {state.cash} | Fuel: {state.fuel} | Morale: {state.morale}")
+    print(f"Cash: {state.cash} | Fuel: {state.fuel} | Morale: {state.morale} | Bugs: {state.bugs}")
 
 
 def prompt_action() -> str:
@@ -396,7 +447,7 @@ def game_loop(start_cash: int = 100, start_fuel: int = 100, start_morale: int = 
     if state.win:
         print("🙌🏼 You reached San Francisco. The future is yours 🔮")
     else:
-        print(" 🚗💨 Your run ended. One more iteration and you'll make it 🤞🏾")
+        print(" 🚗💨 Your run ended. One more iteration and you'll make it 🤞🏽")
 
 
 if __name__ == "__main__":
