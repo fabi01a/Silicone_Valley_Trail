@@ -48,6 +48,8 @@ Heat → higher fuel usage, morale drop, more bugs
 Rain/Fog → minor penalties
 Clear skies → small morale boost
 
+Weather data is fetched from Open-Meteo and influences fuel cost, morale, and bug generation. If the API fails, the game falls back to simulated weather conditions.
+
 --->(Designed to integrate with a real weather API)
 
 🏁 Win / Lose Conditions
