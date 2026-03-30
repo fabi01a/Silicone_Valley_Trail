@@ -146,17 +146,17 @@ def handle_costco_stop(state: GameState) -> None:
 
 
 def handle_restaurant_stop(state: GameState) -> None:
-    print(term.yellow("\n🍽️ Oh Look - its a 🌭 Not Hotdogs 🥤 — a team favorite 😋"))
+    print(term.yellow("\n🍽️ You spot 🌭 Not Hotdog 🥤 — a team favorite 😋"))
 
     if state.cash < 20:
         print(term.firebrick3("💸 Not enough cash for a proper meal 😩"))
         return
 
-    choice = input("Wanna grab a team meal at 🌭 Not Hotdogs 🥤? (y/n): ").strip().lower()
+    choice = input("Wanna grab a team meal at 🌭 Not Hotdog 🥤? (y/n): ").strip().lower()
 
     while choice not in {"y", "n"}:
         print("⚠️ Please enter 'y' or 'n' ⚠️")
-        choice = input("Grab a team meal at 🌭 Not Hotdogs 🥤? (y/n): ").strip().lower()
+        choice = input(prompt).strip().lower()
 
     if choice != "y":
         print("✋ You skip the meal and keep moving 🏃💨")
@@ -172,7 +172,7 @@ def handle_restaurant_stop(state: GameState) -> None:
     state.morale += 12
     state.bugs = max(0, state.bugs - 1)
 
-    print("\n🐷 The team eats well. Spirits are high 😊")
+    print("\n🐷 The team feels recharged after a good meal. Spirits are high 😊")
 
     changes = []
 
@@ -191,14 +191,13 @@ def handle_final_pitch(state: GameState) -> None:
     print("\n🎤 You’ve made it to Demo Day 🙌\n")
 
     if state.morale < 40:
-        print("😬 Your team isn't ready to present. Morale is too low 😖")
+        print("😬 Morale is too low. The team can't present 😖")
         state.is_over = True
         state.win = False
         return
 
     if state.bugs >= 5:
-        print("💥 Your product is too unstable to demo. There are too many bugs 📯")
-        print("📢 You should have debugged more before arriving 😖")
+        print("💥 Too many bugs. The demo crashes in front of investors 😖")
         state.is_over = True
         state.win = False
         return
@@ -210,7 +209,7 @@ def handle_final_pitch(state: GameState) -> None:
         choice = input("Are you ready to present? (y/n): ").strip().lower()
 
     if choice != "y":
-        print("🧠 You hesitate too long... the opportunity passes you by 🎺")
+        print("🫥 You hesitate and the opportunity passes you by... 🎺")
         state.is_over = True
         state.win = False
         return
@@ -338,7 +337,7 @@ def _event_travel_hackathon(state: GameState) -> str:
         state.cash += 30   # ⬅️ increase from 25
         state.morale += 4
         state.bugs += 3
-        return "⭐️ Hackathon win! You secure funding, but introduce new bugs 🥲"
+        return "⭐️ Hackathon win! You secure some funding, but introduce new bugs 🥲"
     else:
         state.morale -= 5
         state.cash -= 10
@@ -542,11 +541,11 @@ def travel(state: GameState) -> None:
     fuel_cost = int(round((distance / 2.5) * float(weather["fuel_multiplier"])))
     state.fuel -= fuel_cost
 
-    print("🚗 The team hits the road...")
+    print("🚗 You hit the road...")
 
     # 🚨 Fuel check
     if state.fuel <= 0:
-        print("\n\n⛽ You ran out of fuel. You can't continue the journey 😭")
+        print("\n\n⛽ You ran out of fuel. The journey ends here 😭")
         state.is_over = True
         state.win = False
         return
@@ -574,6 +573,11 @@ def travel(state: GameState) -> None:
     # =========================
     state.progress_index += 1
     state.sync_location()
+
+    # =========================
+    # 🧠 PASSIVE PRESSURE (NEW)
+    state.bugs += 1
+    state.morale = max(0, state.morale - 1)
 
     # =========================
     # ⏳ FINAL STRETCH
@@ -677,7 +681,7 @@ def final_pitch(state: GameState) -> bool:
         print("🚀 The demo is flawless! Investors are impressed 💰 Funding is coming your way! 🤑")
         return True
     else:
-        print("💥 The demo crashes 😖 The room goes silent 🦗")
+        print("💥 The demo crashes 😖 The team falls short... 🎻")
         return False
 
 
@@ -728,7 +732,7 @@ def game_loop(start_cash: int = 100, start_fuel: int = 100, start_morale: int = 
         while not action:
             action = prompt_action()
             if not action:
-                print("Invalid choice. Enter `travel`, `rest`, or `debug`.")
+                print("Invalid choice. Enter '1' - `travel`, '2' - `rest`, or 3 - `debug`")
 
         # Apply action effects.
         if action == "travel":
