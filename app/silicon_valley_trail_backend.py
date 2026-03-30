@@ -4,8 +4,13 @@ Silicon Valley Trail — CLI backend.
 Logic lives under `app.world`, `app.models`, `app.services`, `app.gameplay`, and
 `app.cli`. This module re-exports the public API and is the runnable entrypoint.
 """
-
 from __future__ import annotations
+import warnings
+
+warnings.filterwarnings(
+    "ignore",
+    message="urllib3 v2.0 only supports OpenSSL.*",
+)
 
 import sys
 from pathlib import Path

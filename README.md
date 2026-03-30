@@ -8,7 +8,7 @@ Players must manage limited resources, navigate dynamic events, and make strateg
 
 🚀 How to Run
 
-Set a free [OpenWeatherMap](https://openweathermap.org/api) API key (Current Weather Data). Either export it or put `OPENWEATHERMAP_API_KEY=...` in a `.env` file at the project root (see `.env.example`; `.env` is gitignored).
+Set a free [OpenWeatherMap](https://openweathermap.org/api) API key (Current Weather Data). Either export it or put `OPENWEATHERMAP_API_KEY=...` in a `.env` file at the **project root** or in **`app/.env`** (both are gitignored).
 
 ```bash
 export OPENWEATHERMAP_API_KEY="your_key_here"
