@@ -88,4 +88,7 @@ __all__ = [
 
 
 if __name__ == "__main__":
-    game_loop()
+    try:
+        game_loop()
+    except KeyboardInterrupt:
+        print("\n\n👋 Game interrupted. See you next time!")
