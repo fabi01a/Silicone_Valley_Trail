@@ -38,13 +38,11 @@ def handle_costco_stop(state: GameState) -> None:
         "fuel": state.fuel,
         "cash": state.cash,
         "morale": state.morale,
-        "bugs": state.bugs,
     }
 
     state.cash -= 40
     state.fuel += 25
     state.morale += 8
-    state.bugs = max(0, state.bugs - 2)
 
     print("\n📦 You stock up in bulk. The team feels prepared 💥")
 
@@ -55,8 +53,6 @@ def handle_costco_stop(state: GameState) -> None:
         changes.append(f"💵 Cash: {state.cash - before['cash']:+}")
     if state.morale != before["morale"]:
         changes.append(f"🥳 Morale: {state.morale - before['morale']:+}")
-    if state.bugs != before["bugs"]:
-        changes.append(f"👾 Bugs: {state.bugs - before['bugs']:+}")
 
     if changes:
         print("📊 Changes → " + " | ".join(changes))
@@ -88,7 +84,8 @@ def handle_restaurant_stop(state: GameState) -> None:
 
     state.cash -= 20
     state.morale += 12
-    state.bugs = max(0, state.bugs - 1)
+    if state.bugs > 0:
+        state.bugs -= 1
 
     print("\n🐷 The team feels recharged after a good meal. Spirits are high 😊")
 
