@@ -47,10 +47,10 @@ def handle_costco_stop(state: GameState) -> None:
     print("\n📦 You stock up in bulk. The team feels prepared 💥")
 
     changes = []
-    if state.fuel != before["fuel"]:
-        changes.append(f"⛽️ Fuel: {state.fuel - before['fuel']:+}")
     if state.cash != before["cash"]:
         changes.append(f"💵 Cash: {state.cash - before['cash']:+}")
+    if state.fuel != before["fuel"]:
+        changes.append(f"⛽️ Fuel: {state.fuel - before['fuel']:+}")
     if state.morale != before["morale"]:
         changes.append(f"🥳 Morale: {state.morale - before['morale']:+}")
 

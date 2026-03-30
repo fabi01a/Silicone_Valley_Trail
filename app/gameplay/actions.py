@@ -44,10 +44,10 @@ def travel(state: GameState) -> None:
             return
 
     before = {
+        "cash": state.cash,
         "fuel": state.fuel,
         "morale": state.morale,
         "bugs": state.bugs,
-        "cash": state.cash,
     }
 
     if condition == "rain":
@@ -67,7 +67,6 @@ def travel(state: GameState) -> None:
     print(weather_msg)
 
     state.fuel -= fuel_cost
-    print("🚗 You hit the road...")
 
     if state.fuel <= 0:
         print("\n\n⛽ You ran out of fuel. The journey ends here 😭")
@@ -84,10 +83,10 @@ def travel(state: GameState) -> None:
     state.morale = max(0, state.morale - 1)
 
     changes = []
-    if state.fuel != before["fuel"]:
-        changes.append(f"⛽️ Fuel: {state.fuel - before['fuel']:+}")
     if state.cash != before["cash"]:
         changes.append(f"💵 Cash: {state.cash - before['cash']:+}")
+    if state.fuel != before["fuel"]:
+        changes.append(f"⛽️ Fuel: {state.fuel - before['fuel']:+}")
     if state.morale != before["morale"]:
         changes.append(f"🥳 Morale: {state.morale - before['morale']:+}")
     if state.bugs != before["bugs"]:
@@ -131,37 +130,49 @@ def travel(state: GameState) -> None:
 
 
 def rest(state: GameState) -> None:
-    """Rest the team to recover morale and reduce bugs."""
+    """Rest the team OR trigger a rest event (not both)."""
     if state.cash < 12:
         print("💸 You can't afford to rest right now ☹️")
         return
 
+    # Decide: event OR baseline rest
+    import random
+    if random.random() < 0.5:
+        # 🎲 Event path
+        trigger_random_event(state, action="rest")
+        return
+
+    # 😴 Baseline rest path
     before = {
-        "fuel": state.fuel,
         "cash": state.cash,
+        "fuel": state.fuel,
         "morale": state.morale,
         "bugs": state.bugs,
     }
 
-    state.morale += 10
-    state.fuel += 6
-    state.bugs = max(0, state.bugs - 1)
-    state.cash -= 12
-
     print("\n😴 The team rests and regroups...")
+
+    state.cash -= 12
+    state.fuel += 6
+    state.morale += 10
+
+    if state.bugs > 0:
+        state.bugs -= 1
+
     changes = []
-    if state.fuel != before["fuel"]:
-        changes.append(f"⛽️ Fuel: {state.fuel - before['fuel']:+}")
+
     if state.cash != before["cash"]:
         changes.append(f"💵 Cash: {state.cash - before['cash']:+}")
+    if state.fuel != before["fuel"]:
+        changes.append(f"⛽️ Fuel: {state.fuel - before['fuel']:+}")
     if state.morale != before["morale"]:
         changes.append(f"🥳 Morale: {state.morale - before['morale']:+}")
     if state.bugs != before["bugs"]:
         changes.append(f"👾 Bugs: {state.bugs - before['bugs']:+}")
+
     if changes:
         print("📊 Changes → " + " | ".join(changes))
 
-    trigger_random_event(state, action="rest")
 
 
 def debug(state: GameState) -> None:
