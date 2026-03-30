@@ -1,13 +1,16 @@
-"""Live weather → game conditions (Open-Meteo)."""
+"""Live weather → game conditions (OpenWeatherMap)."""
 
 from __future__ import annotations
 
+import os
 import random
 from typing import Any, TypedDict
 
 import requests
 
 from app.world.config import CITY_COORDS
+
+OPENWEATHERMAP_URL = "https://api.openweathermap.org/data/2.5/weather"
 
 
 class WeatherForecast(TypedDict):
@@ -27,20 +30,29 @@ def get_weather(start: str, end: str) -> WeatherForecast:
     """Map current weather at `start` to travel modifiers (`end` reserved for routing)."""
     del end  # API is point-based for now
 
+    api_key = os.environ.get("OPENWEATHERMAP_API_KEY", "").strip()
+    if not api_key:
+        condition = random.choice(["clear", "rain", "fog", "heat"])
+        return WeatherForecast(
+            condition=condition,
+            fuel_multiplier=_FUEL_MULTIPLIER[condition],
+        )
+
     try:
         lat, lon = CITY_COORDS.get(start, (37.7749, -122.4194))
         response = requests.get(
-            "https://api.open-meteo.com/v1/forecast",
+            OPENWEATHERMAP_URL,
             params={
-                "latitude": lat,
-                "longitude": lon,
-                "current_weather": True,
+                "lat": lat,
+                "lon": lon,
+                "appid": api_key,
+                "units": "imperial",
             },
-            timeout=2,
+            timeout=5,
         )
+        response.raise_for_status()
         data: dict[str, Any] = response.json()
-        temp_c = float(data["current_weather"]["temperature"])
-        temp_f = (temp_c * 9 / 5) + 32
+        temp_f = float(data["main"]["temp"])
 
         if temp_f < 55:
             condition = "fog"

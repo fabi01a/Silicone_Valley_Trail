@@ -7,6 +7,7 @@ implementation modules (e.g. `app.services.weather`, `app.gameplay.actions`).
 
 from __future__ import annotations
 
+import os
 import unittest
 from unittest.mock import MagicMock, patch
 
@@ -66,42 +67,51 @@ class TestGetDistance(unittest.TestCase):
 
 
 class TestGetWeather(unittest.TestCase):
-    def _mock_response(self, temp_c: float) -> MagicMock:
+    def _mock_response(self, temp_f: float) -> MagicMock:
         mock = MagicMock()
-        mock.json.return_value = {"current_weather": {"temperature": temp_c}}
+        mock.raise_for_status = MagicMock()
+        mock.json.return_value = {"main": {"temp": temp_f}}
         return mock
 
+    def test_missing_api_key_uses_fallback(self) -> None:
+        env = {k: v for k, v in os.environ.items() if k != "OPENWEATHERMAP_API_KEY"}
+        with patch.dict(os.environ, env, clear=True), patch(
+            "app.services.weather.random.choice",
+            return_value="clear",
+        ):
+            w = get_weather("San Jose", "Santa Clara")
+        self.assertEqual(w["condition"], "clear")
+
     def test_api_cold_maps_to_fog(self) -> None:
-        # ~50°F
-        with patch(
+        with patch.dict(os.environ, {"OPENWEATHERMAP_API_KEY": "test-key"}), patch(
             "app.services.weather.requests.get",
-            return_value=self._mock_response(10.0),
+            return_value=self._mock_response(50.0),
         ):
             w = get_weather("San Jose", "Santa Clara")
         self.assertEqual(w["condition"], "fog")
         self.assertEqual(w["fuel_multiplier"], 1.1)
 
     def test_api_hot_maps_to_heat(self) -> None:
-        with patch(
+        with patch.dict(os.environ, {"OPENWEATHERMAP_API_KEY": "test-key"}), patch(
             "app.services.weather.requests.get",
-            return_value=self._mock_response(32.0),
+            return_value=self._mock_response(90.0),
         ):
             w = get_weather("San Jose", "Santa Clara")
         self.assertEqual(w["condition"], "heat")
         self.assertEqual(w["fuel_multiplier"], 1.3)
 
     def test_api_mid_temp_maps_to_rain(self) -> None:
-        with patch(
+        with patch.dict(os.environ, {"OPENWEATHERMAP_API_KEY": "test-key"}), patch(
             "app.services.weather.requests.get",
-            return_value=self._mock_response(18.0),
+            return_value=self._mock_response(64.0),
         ):
             w = get_weather("San Jose", "Santa Clara")
         self.assertEqual(w["condition"], "rain")
 
     def test_api_warm_uses_weighted_branch(self) -> None:
-        with patch(
+        with patch.dict(os.environ, {"OPENWEATHERMAP_API_KEY": "test-key"}), patch(
             "app.services.weather.requests.get",
-            return_value=self._mock_response(24.0),
+            return_value=self._mock_response(75.0),
         ), patch(
             "app.services.weather.random.choices",
             return_value=["clear"],
@@ -110,7 +120,7 @@ class TestGetWeather(unittest.TestCase):
         self.assertEqual(w["condition"], "clear")
 
     def test_fallback_on_request_failure(self) -> None:
-        with patch(
+        with patch.dict(os.environ, {"OPENWEATHERMAP_API_KEY": "test-key"}), patch(
             "app.services.weather.requests.get",
             side_effect=OSError("network"),
         ), patch(

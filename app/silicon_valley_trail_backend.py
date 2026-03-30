@@ -15,6 +15,10 @@ if __package__ is None:
     if str(_REPO_ROOT) not in sys.path:
         sys.path.insert(0, str(_REPO_ROOT))
 
+from app.load_env import load_dotenv_if_present
+
+load_dotenv_if_present()
+
 from app.cli.game import check_end_conditions, game_loop, prompt_action, show_player_status
 from app.gameplay.actions import debug, rest, travel
 from app.gameplay.events import (

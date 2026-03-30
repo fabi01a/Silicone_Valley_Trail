@@ -8,9 +8,14 @@ Players must manage limited resources, navigate dynamic events, and make strateg
 
 🚀 How to Run
 
+Set a free [OpenWeatherMap](https://openweathermap.org/api) API key (Current Weather Data). Either export it or put `OPENWEATHERMAP_API_KEY=...` in a `.env` file at the project root (see `.env.example`; `.env` is gitignored).
+
 ```bash
+export OPENWEATHERMAP_API_KEY="your_key_here"
 python app/silicon_valley_trail_backend.py
 ```
+
+If the key is unset, travel still works using random simulated weather (same as when the API request fails).
 
 ---
 
@@ -74,14 +79,14 @@ Examples:
 
 🌦️ Weather System (API-Driven)
 
-Weather data is fetched from the Open-Meteo API and affects gameplay:
+Weather data is fetched from the OpenWeatherMap API and affects gameplay:
 
 * ☀️ Clear → slight morale boost
 * 🌧️ Rain → morale penalty
 * 🌫️ Fog → minor disruption
 * 🥵 Heat → increased fuel consumption + morale drop
 
-If the API fails, the game falls back to simulated weather conditions.
+If the key is missing, the request fails, or the response is invalid, the game falls back to simulated weather conditions.
 
 ---
 
