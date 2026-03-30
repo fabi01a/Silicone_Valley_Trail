@@ -37,6 +37,7 @@ CITY_COORDS = {
     "Santa Clara": (37.3541, -121.9552),
     "Palo Alto": (37.4419, -122.1430),
     "Redwood City": (37.4852, -122.2364),
+    "San Carlos": (37.5072, -122.2605),
     "Mountain View": (37.3861, -122.0839),
     "San Mateo": (37.5630, -122.3255),
     "Daly City": (37.6879, -122.4702),
@@ -152,11 +153,12 @@ def handle_restaurant_stop(state: GameState) -> None:
         print(term.firebrick3("💸 Not enough cash for a proper meal 😩"))
         return
 
-    choice = input("Wanna grab a team meal at 🌭 Not Hotdog 🥤? (y/n): ").strip().lower()
+    meal_prompt = "Wanna grab a team meal at 🌭 Not Hotdog 🥤? (y/n): "
+    choice = input(meal_prompt).strip().lower()
 
     while choice not in {"y", "n"}:
         print("⚠️ Please enter 'y' or 'n' ⚠️")
-        choice = input(prompt).strip().lower()
+        choice = input(meal_prompt).strip().lower()
 
     if choice != "y":
         print("✋ You skip the meal and keep moving 🏃💨")
@@ -455,10 +457,6 @@ def check_end_conditions(state: GameState) -> None:
         state.is_over = True
         state.win = False
         return
-    
-    if state.cash < 12:
-        print("💸 You can't afford to rest right now ☹️")
-        return
 
     if state.fuel <= 0:
         print("⛽ You ran out of fuel. You can't continue the journey 😭")
@@ -625,6 +623,10 @@ def travel(state: GameState) -> None:
 
 def rest(state: GameState) -> None:
     """Rest the team to recover morale and reduce bugs."""
+    if state.cash < 12:
+        print("💸 You can't afford to rest right now ☹️")
+        return
+
     # Rest helps morale, slightly refuels, and helps with bugs.
     state.morale += 10
     state.fuel += 6
@@ -633,8 +635,7 @@ def rest(state: GameState) -> None:
     # Resting is not free.
     state.cash -= 12
 
-    message = trigger_random_event(state, action="rest")
-    print(message)
+    trigger_random_event(state, action="rest")
 
 
 def debug(state: GameState) -> None:
@@ -732,7 +733,9 @@ def game_loop(start_cash: int = 100, start_fuel: int = 100, start_morale: int = 
         while not action:
             action = prompt_action()
             if not action:
-                print("Invalid choice. Enter '1' - `travel`, '2' - `rest`, or 3 - `debug`")
+                print(
+                    "Invalid choice. Enter 1/travel/t, 2/rest/r, or 3/debug/d."
+                )
 
         # Apply action effects.
         if action == "travel":
