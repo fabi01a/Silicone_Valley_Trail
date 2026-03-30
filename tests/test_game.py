@@ -1,7 +1,8 @@
 """
-Test suite for Silicon Valley Trail backend (app.silicon_valley_trail_backend).
+Test suite for Silicon Valley Trail backend.
 
-Uses unittest and mocks for CLI input, HTTP, and randomness so tests stay deterministic.
+Imports the compatibility facade `app.silicon_valley_trail_backend`; mocks target
+implementation modules (e.g. `app.services.weather`, `app.gameplay.actions`).
 """
 
 from __future__ import annotations
@@ -73,7 +74,7 @@ class TestGetWeather(unittest.TestCase):
     def test_api_cold_maps_to_fog(self) -> None:
         # ~50°F
         with patch(
-            "app.silicon_valley_trail_backend.requests.get",
+            "app.services.weather.requests.get",
             return_value=self._mock_response(10.0),
         ):
             w = get_weather("San Jose", "Santa Clara")
@@ -82,7 +83,7 @@ class TestGetWeather(unittest.TestCase):
 
     def test_api_hot_maps_to_heat(self) -> None:
         with patch(
-            "app.silicon_valley_trail_backend.requests.get",
+            "app.services.weather.requests.get",
             return_value=self._mock_response(32.0),
         ):
             w = get_weather("San Jose", "Santa Clara")
@@ -91,7 +92,7 @@ class TestGetWeather(unittest.TestCase):
 
     def test_api_mid_temp_maps_to_rain(self) -> None:
         with patch(
-            "app.silicon_valley_trail_backend.requests.get",
+            "app.services.weather.requests.get",
             return_value=self._mock_response(18.0),
         ):
             w = get_weather("San Jose", "Santa Clara")
@@ -99,10 +100,10 @@ class TestGetWeather(unittest.TestCase):
 
     def test_api_warm_uses_weighted_branch(self) -> None:
         with patch(
-            "app.silicon_valley_trail_backend.requests.get",
+            "app.services.weather.requests.get",
             return_value=self._mock_response(24.0),
         ), patch(
-            "app.silicon_valley_trail_backend.random.choices",
+            "app.services.weather.random.choices",
             return_value=["clear"],
         ):
             w = get_weather("San Jose", "Santa Clara")
@@ -110,10 +111,10 @@ class TestGetWeather(unittest.TestCase):
 
     def test_fallback_on_request_failure(self) -> None:
         with patch(
-            "app.silicon_valley_trail_backend.requests.get",
+            "app.services.weather.requests.get",
             side_effect=OSError("network"),
         ), patch(
-            "app.silicon_valley_trail_backend.random.choice",
+            "app.services.weather.random.choice",
             return_value="fog",
         ):
             w = get_weather("San Jose", "Santa Clara")
@@ -165,10 +166,10 @@ class TestTravel(unittest.TestCase):
         state.sync_location()
 
         with patch(
-            "app.silicon_valley_trail_backend.get_weather",
+            "app.gameplay.actions.get_weather",
             return_value=self._fixed_weather_clear(),
         ), patch(
-            "app.silicon_valley_trail_backend.trigger_random_event",
+            "app.gameplay.actions.trigger_random_event",
         ), patch("builtins.print"), patch(
             "builtins.input",
             return_value="n",
@@ -193,10 +194,10 @@ class TestTravel(unittest.TestCase):
             "fuel_multiplier": 1.0,
         }
         with patch(
-            "app.silicon_valley_trail_backend.get_weather",
+            "app.gameplay.actions.get_weather",
             return_value=expensive_weather,
         ), patch(
-            "app.silicon_valley_trail_backend.get_distance",
+            "app.gameplay.actions.get_distance",
             return_value=100,
         ), patch("builtins.print"):
             travel(state)
@@ -210,8 +211,7 @@ class TestRest(unittest.TestCase):
     def test_rest_adjusts_resources(self) -> None:
         state = GameState(cash=50, fuel=50, morale=40, bugs=3)
         with patch(
-            "app.silicon_valley_trail_backend.trigger_random_event",
-            return_value="",
+            "app.gameplay.actions.trigger_random_event",
         ), patch("builtins.print"):
             rest(state)
 
@@ -223,7 +223,7 @@ class TestRest(unittest.TestCase):
     def test_rest_skips_when_cannot_afford(self) -> None:
         state = GameState(cash=10, fuel=50, morale=40, bugs=3)
         with patch("builtins.print"), patch(
-            "app.silicon_valley_trail_backend.trigger_random_event",
+            "app.gameplay.actions.trigger_random_event",
         ) as mock_ev:
             rest(state)
         self.assertEqual(state.morale, 40)
@@ -255,7 +255,7 @@ class TestFinalPitch(unittest.TestCase):
     def test_success_when_random_favors(self) -> None:
         state = GameState(bugs=2, morale=70)
         with patch("builtins.print"), patch(
-            "app.silicon_valley_trail_backend.random.random",
+            "app.gameplay.pitch.random.random",
             return_value=0.0,
         ):
             ok = final_pitch(state)
