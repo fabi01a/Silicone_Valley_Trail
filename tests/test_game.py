@@ -189,6 +189,8 @@ class TestTravel(unittest.TestCase):
         self.assertEqual(state.progress_index, 1)
         self.assertEqual(state.current_location, "Santa Clara")
         self.assertEqual(state.bugs, 1)
+        # clear +2 morale, then travel fatigue -1
+        self.assertEqual(state.morale, 51)
 
     def test_final_leg_blocks_travel_if_insufficient_fuel(self) -> None:
         state = GameState(
@@ -209,6 +211,27 @@ class TestTravel(unittest.TestCase):
         ), patch(
             "app.gameplay.actions.get_distance",
             return_value=100,
+        ), patch("builtins.print"):
+            travel(state)
+
+        self.assertTrue(state.is_over)
+        self.assertFalse(state.win)
+        self.assertEqual(state.progress_index, len(LOCATIONS) - 2)
+
+    def test_final_leg_blocks_when_heat_requires_extra_fuel(self) -> None:
+        state = GameState(
+            progress_index=len(LOCATIONS) - 2,
+            cash=100,
+            fuel=13,
+            morale=50,
+        )
+        state.sync_location()
+        with patch(
+            "app.gameplay.actions.get_weather",
+            return_value={"condition": "heat", "fuel_multiplier": 1.3},
+        ), patch(
+            "app.gameplay.actions.get_distance",
+            return_value=25,
         ), patch("builtins.print"):
             travel(state)
 

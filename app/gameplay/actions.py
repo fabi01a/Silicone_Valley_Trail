@@ -32,9 +32,11 @@ def travel(state: GameState) -> None:
     mult = float(weather["fuel_multiplier"])
 
     fuel_cost = int(round((distance / 2.5) * mult))
+    heat_extra_fuel = 5 if condition == "heat" else 0
+    min_fuel_this_leg = fuel_cost + heat_extra_fuel
 
     if state.progress_index == len(LOCATIONS) - 2:
-        if state.fuel < fuel_cost:
+        if state.fuel < min_fuel_this_leg:
             print("⛽ Not enough fuel to make it to San Francisco.")
             print("😭 The journey ends here.")
             state.is_over = True
@@ -45,6 +47,7 @@ def travel(state: GameState) -> None:
         "fuel": state.fuel,
         "morale": state.morale,
         "bugs": state.bugs,
+        "cash": state.cash,
     }
 
     if condition == "rain":
@@ -58,6 +61,7 @@ def travel(state: GameState) -> None:
         state.morale -= 1
         weather_msg = "🌫️ Fog causes confusion. Progress feels slower 😕"
     else:
+        state.morale += 2
         weather_msg = "🌞 Clear skies. Smooth conditions for the team 😎"
 
     print(weather_msg)
@@ -71,30 +75,27 @@ def travel(state: GameState) -> None:
         state.win = False
         return
 
+    state.cash -= max(3, int(distance / 8))
+
+    state.progress_index += 1
+    state.sync_location()
+
+    state.bugs += 1
+    state.morale = max(0, state.morale - 1)
+
     changes = []
-    
     if state.fuel != before["fuel"]:
         changes.append(f"⛽️ Fuel: {state.fuel - before['fuel']:+}")
-    
+    if state.cash != before["cash"]:
+        changes.append(f"💵 Cash: {state.cash - before['cash']:+}")
     if state.morale != before["morale"]:
         changes.append(f"🥳 Morale: {state.morale - before['morale']:+}")
-    
     if state.bugs != before["bugs"]:
         changes.append(f"👾 Bugs: {state.bugs - before['bugs']:+}")
 
     if changes:
         print()
         print("📊 Changes → " + " | ".join(changes))
-
-    state.cash -= max(3, int(distance / 8))
-
-    state.progress_index += 1
-    state.sync_location()
-
-    if condition == "heat":
-        state.bugs += 1
-
-    state.morale = max(0, state.morale - 1)
 
     if state.current_location == "San Mateo" and prev_location != "San Mateo":
         print("\n" + term.yellow("⏳ Final stretch ahead. Prepare wisely 😬"))
@@ -135,10 +136,30 @@ def rest(state: GameState) -> None:
         print("💸 You can't afford to rest right now ☹️")
         return
 
+    before = {
+        "fuel": state.fuel,
+        "cash": state.cash,
+        "morale": state.morale,
+        "bugs": state.bugs,
+    }
+
     state.morale += 10
     state.fuel += 6
     state.bugs = max(0, state.bugs - 1)
     state.cash -= 12
+
+    print("\n😴 The team rests and regroups...")
+    changes = []
+    if state.fuel != before["fuel"]:
+        changes.append(f"⛽️ Fuel: {state.fuel - before['fuel']:+}")
+    if state.cash != before["cash"]:
+        changes.append(f"💵 Cash: {state.cash - before['cash']:+}")
+    if state.morale != before["morale"]:
+        changes.append(f"🥳 Morale: {state.morale - before['morale']:+}")
+    if state.bugs != before["bugs"]:
+        changes.append(f"👾 Bugs: {state.bugs - before['bugs']:+}")
+    if changes:
+        print("📊 Changes → " + " | ".join(changes))
 
     trigger_random_event(state, action="rest")
 
