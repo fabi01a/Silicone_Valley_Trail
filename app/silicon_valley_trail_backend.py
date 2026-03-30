@@ -266,12 +266,6 @@ def get_weather(start: str, end: str) -> dict:
             "fog": 1.1,
             "heat": 1.3,
         }[condition],
-        "morale_delta": {
-            "clear": +1,
-            "rain": -2,
-            "fog": -1,
-            "heat": -3,
-        }[condition],
     }
 
 
@@ -365,7 +359,6 @@ EVENTS: List[Dict[str, object]] = [
     {"name": "Hackathon", "applies_to": {"travel"}, "effect": _event_travel_hackathon, "optional": True, "weight": 2},
     {"name": "Supply Drop", "applies_to": {"travel"}, "effect": _event_travel_supply_drop, "optional": True, "weight": 1},  
     
-    {"name": "Breakthrough", "applies_to": {"debug"}, "effect": _event_debug_breakthrough, "weight": 2},
     {"name": "Standard Debug", "applies_to": {"debug"}, "effect": _event_debug_standard, "weight": 3},
     {"name": "Breakthrough", "applies_to": {"debug"}, "effect": _event_debug_breakthrough, "weight": 1},    
 

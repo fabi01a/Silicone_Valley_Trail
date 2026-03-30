@@ -87,7 +87,7 @@ class TestGetWeather(unittest.TestCase):
         ):
             w = get_weather("San Jose", "Santa Clara")
         self.assertEqual(w["condition"], "heat")
-        self.assertEqual(w["morale_delta"], -3)
+        self.assertEqual(w["fuel_multiplier"], 1.3)
 
     def test_api_mid_temp_maps_to_rain(self) -> None:
         with patch(
@@ -152,7 +152,6 @@ class TestTravel(unittest.TestCase):
         return {
             "condition": "clear",
             "fuel_multiplier": 1.0,
-            "morale_delta": 1,
         }
 
     def test_travel_advances_and_applies_passive_bugs(self) -> None:
@@ -192,7 +191,6 @@ class TestTravel(unittest.TestCase):
         expensive_weather = {
             "condition": "clear",
             "fuel_multiplier": 1.0,
-            "morale_delta": 0,
         }
         with patch(
             "app.silicon_valley_trail_backend.get_weather",
