@@ -44,6 +44,7 @@ def travel(state: GameState) -> None:
     before = {
         "fuel": state.fuel,
         "morale": state.morale,
+        "bugs": state.bugs,
     }
 
     if condition == "rain":
@@ -71,12 +72,18 @@ def travel(state: GameState) -> None:
         return
 
     changes = []
+    
     if state.fuel != before["fuel"]:
         changes.append(f"⛽️ Fuel: {state.fuel - before['fuel']:+}")
+    
     if state.morale != before["morale"]:
         changes.append(f"🥳 Morale: {state.morale - before['morale']:+}")
+    
+    if state.bugs != before["bugs"]:
+        changes.append(f"👾 Bugs: {state.bugs - before['bugs']:+}")
 
     if changes:
+        print()
         print("📊 Changes → " + " | ".join(changes))
 
     state.cash -= max(3, int(distance / 8))
@@ -84,7 +91,9 @@ def travel(state: GameState) -> None:
     state.progress_index += 1
     state.sync_location()
 
-    state.bugs += 1
+    if condition == "heat":
+        state.bugs += 1
+
     state.morale = max(0, state.morale - 1)
 
     if state.current_location == "San Mateo" and prev_location != "San Mateo":
