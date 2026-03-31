@@ -5,6 +5,7 @@ from __future__ import annotations
 import random
 
 from app.models.state import GameState
+from app.world.config import term
 
 
 def final_pitch(state: GameState) -> bool:

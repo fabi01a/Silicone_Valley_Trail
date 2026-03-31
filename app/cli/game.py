@@ -36,7 +36,7 @@ def show_player_status(state: GameState) -> None:
     """Print the current state to the CLI."""
     print()
     print(term.green3("\n===== Silicon Valley Trail ====="))
-    print(f"Day: {state.day}")
+    print(f"{term.green3('Day:')} {term.green3(str(state.day))}")
     print(f"{term.green3('Location:')} {term.green3(state.current_location)}")
     print(
         f"💵 Cash: {state.cash} | ⛽️ Fuel: {state.fuel} | "

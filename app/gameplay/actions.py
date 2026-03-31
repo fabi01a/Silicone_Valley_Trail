@@ -1,5 +1,8 @@
 """Per-turn player actions: travel, rest, debug."""
+
 from __future__ import annotations
+
+import random
 
 from app.gameplay.events import trigger_random_event
 from app.gameplay.stops import (
@@ -13,7 +16,7 @@ from app.models.state import GameState
 from app.services.weather import get_weather
 from app.world.config import LOCATIONS, term
 from app.world.distance import get_distance
-import random
+
 
 def travel(state: GameState) -> None:
     """Move the team to the next location and update resources."""
@@ -127,19 +130,11 @@ def travel(state: GameState) -> None:
 
 
 def rest(state: GameState) -> None:
-    """Rest the team OR trigger a rest event (not both)."""
+    """Rest the team (baseline recovery), then a possible random rest event."""
     if state.cash < 12:
         print("💸 You can't afford to rest right now ☹️")
         return
 
-    # Decide: event OR baseline rest
-    import random
-    if random.random() < 0.5:
-        # 🎲 Event path
-        trigger_random_event(state, action="rest")
-        return
-
-    # 😴 Baseline rest path
     before = {
         "cash": state.cash,
         "fuel": state.fuel,
@@ -152,12 +147,10 @@ def rest(state: GameState) -> None:
     state.cash -= 12
     state.fuel += 6
     state.morale += 10
-
     if state.bugs > 0:
         state.bugs -= 1
 
     changes = []
-
     if state.cash != before["cash"]:
         changes.append(f"💵 Cash: {state.cash - before['cash']:+}")
     if state.fuel != before["fuel"]:
@@ -170,6 +163,7 @@ def rest(state: GameState) -> None:
     if changes:
         print("📊 Changes → " + " | ".join(changes))
 
+    trigger_random_event(state, action="rest")
 
 
 def debug(state: GameState) -> None:
