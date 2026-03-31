@@ -23,21 +23,23 @@ Play the game and find out.
    cd silicon-valley-trail
 ```
    
-2. Create a virtual environment
-   $ python3 -m venv venv
-   $ source venv/bin/activate  # Mac/Linux
-   # or
-   $ venv\Scripts\activate     # Windows
-
-3. Install dependencies
-   $ pip install -r requirements.txt
-
+### 2. Create a virtual environment
+ ``` bash
+    python3 -m venv venv
+    source venv/bin/activate  # Mac/Linux
+    # or
+    venv\Scripts\activate     # Windows
+```
+### 3. Install dependencies
+``` bash 
+   pip install -r requirements.txt
+```
    Core dependencies:
    • blessed → terminal UI
    • requests → API calls
    • vpython-dotenv (optional, for local env loading)
 
-4. Set up your API key (optional but recommended)
+6. Set up your API key (optional but recommended)
    This project uses the OpenWeatherMap API
   • Option A: .env file (recommended)
   
