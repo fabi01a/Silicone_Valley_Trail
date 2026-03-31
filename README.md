@@ -17,7 +17,7 @@ Play the game and find out.
 
 ## 🚀 Quick Start (from a fresh machine)
 
-###1. Clone the repo
+### 1. Clone the repo
 ``` bash
    git clone <your-repo-url>
    cd silicon-valley-trail
