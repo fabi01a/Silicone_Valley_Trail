@@ -15,16 +15,18 @@ Play the game and find out.
 -----
 
 
-🚀 Quick Start (from a fresh machine)
+## 🚀 Quick Start (from a fresh machine)
 
-1. Clone the repo
-   $ git clone <your-repo-url>
-   $ cd silicon-valley-trail
+###1. Clone the repo
+``` bash
+   git clone <your-repo-url>
+   cd silicon-valley-trail
+```
    
 2. Create a virtual environment
    $ python3 -m venv venv
    $ source venv/bin/activate  # Mac/Linux
-   or
+   # or
    $ venv\Scripts\activate     # Windows
 
 3. Install dependencies
