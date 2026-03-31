@@ -14,6 +14,18 @@ Play the game and find out.
 
 ---
 
+## 👾 Game Play
+
+
+https://github.com/user-attachments/assets/7ff1c8ee-72db-43cc-a611-78ba75d84ba6
+
+
+
+https://github.com/user-attachments/assets/8cf228ee-dde7-4d2a-b747-a3639033a638
+
+
+---
+
 ## 🚀 Quick Start (from a fresh machine)
 
 ### 1. Clone the repo
