@@ -17,6 +17,11 @@ from app.services.weather import get_weather
 from app.world.config import LOCATIONS, term
 from app.world.distance import get_distance
 
+# Chance to run a random travel event after a leg (weather still applies every trip).
+TRAVEL_RANDOM_EVENT_CHANCE = 0.85
+# When resting: chance for a rest random event vs quiet recovery (mutually exclusive).
+REST_RANDOM_EVENT_CHANCE = 0.65
+
 
 def travel(state: GameState) -> None:
     """Move the team to the next location and update resources."""
@@ -125,7 +130,7 @@ def travel(state: GameState) -> None:
         handle_final_pitch(state)
         return
 
-    if trigger_event and random.random() < 0.6:
+    if trigger_event and random.random() < TRAVEL_RANDOM_EVENT_CHANCE:
         trigger_random_event(state, action="travel")
 
 
@@ -143,7 +148,7 @@ def rest(state: GameState) -> None:
     }
     state.cash -= 12
 
-    if random.random() < 0.5:
+    if random.random() < REST_RANDOM_EVENT_CHANCE:
         print("📊 Changes → 💵 Cash: -12")
         print()
         trigger_random_event(state, action="rest")
