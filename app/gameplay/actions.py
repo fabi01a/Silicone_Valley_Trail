@@ -1,5 +1,4 @@
 """Per-turn player actions: travel, rest, debug."""
-
 from __future__ import annotations
 
 from app.gameplay.events import trigger_random_event
@@ -14,7 +13,7 @@ from app.models.state import GameState
 from app.services.weather import get_weather
 from app.world.config import LOCATIONS, term
 from app.world.distance import get_distance
-
+import random
 
 def travel(state: GameState) -> None:
     """Move the team to the next location and update resources."""
@@ -96,7 +95,7 @@ def travel(state: GameState) -> None:
         print("📊 Changes → " + " | ".join(changes))
 
     if state.current_location == "San Mateo" and prev_location != "San Mateo":
-        print("\n" + term.seagreen1("⏳ Final stretch ahead. Prepare wisely 😬"))
+        print("\n" + term.magenta2("⏳ Final stretch ahead. Prepare wisely 😬"))
 
     if (
         is_costco_location(state.current_location)
@@ -123,8 +122,7 @@ def travel(state: GameState) -> None:
         handle_final_pitch(state)
         return
 
-    if trigger_event:
-        print()
+    if trigger_event and random.random() < 0.6:
         trigger_random_event(state, action="travel")
 
 
@@ -149,7 +147,7 @@ def rest(state: GameState) -> None:
         "bugs": state.bugs,
     }
 
-    print("\n😴 The team rests and regroups...🛌")
+    print("😴 The team rests and regroups...🛌")
 
     state.cash -= 12
     state.fuel += 6

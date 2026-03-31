@@ -24,7 +24,6 @@ def handle_costco_stop(state: GameState) -> None:
 
     prompt = term.orange("Do you want to stop and restock? (y/n): ")
     choice = input(prompt).strip().lower()
-    print()
 
     while choice not in {"y", "n"}:
         print(term.gold("⚠️ Please enter 'y' or 'n' ⚠️"))

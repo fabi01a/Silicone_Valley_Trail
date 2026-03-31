@@ -135,12 +135,12 @@ def trigger_random_event(state: GameState, action: str) -> None:
     event = random.choices(eligible, weights=weights, k=1)[0]
 
     if event.get("optional", False):
-        print(term.cyan2(f"\n⚡Opportunity: {event['name']} ⚡"))
-        choice = input("Do you want to take this opportunity? (y/n): ").strip().lower()
+        print(term.deepskyblue1(f"\n⚡Opportunity: {event['name']} ⚡"))
+        choice = term.orange(input("Do you want to take this opportunity? (y/n): ")).strip().lower()
 
         while choice not in {"y", "n"}:
             print(term.gold("⚠️ Please enter 'y' or 'n' ⚠️"))
-            choice = input("Do you want to take this opportunity? (y/n): ").strip().lower()
+            choice = term.orange(input("Do you want to take this opportunity? (y/n): ")).strip().lower()
 
         if choice != "y":
             print("😶 You passed on the opportunity. The day continues smoothly 😀")

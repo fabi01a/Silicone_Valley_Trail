@@ -35,5 +35,5 @@ def final_pitch(state: GameState) -> bool:
         )
         return True
 
-    print("💥 The demo crashes 😖 The team falls short... 🎻")
+    print(term.firebrick1("💥 The demo crashes 😖 The team falls short... 🎻"))
     return False
