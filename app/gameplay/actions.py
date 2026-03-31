@@ -39,8 +39,8 @@ def travel(state: GameState) -> None:
 
     if state.progress_index == len(LOCATIONS) - 2:
         if state.fuel < min_fuel_this_leg:
-            print(term.orange("⛽ Not enough fuel to make it to San Francisco."))
-            print(term.firebrick1("😭 The journey ends here."))
+            print(term.orange("⛽ Not enough fuel to make it to San Francisco ❌"))
+            print(term.firebrick1("😭 The journey ends here 😭"))
             state.is_over = True
             state.win = False
             return
@@ -130,7 +130,7 @@ def travel(state: GameState) -> None:
 
 
 def rest(state: GameState) -> None:
-    """Rest the team (baseline recovery), then a possible random rest event."""
+    """Quiet recovery day, or a rest random event — never both."""
     if state.cash < 12:
         print("💸 You can't afford to rest right now ☹️")
         return
@@ -141,10 +141,15 @@ def rest(state: GameState) -> None:
         "morale": state.morale,
         "bugs": state.bugs,
     }
+    state.cash -= 12
+
+    if random.random() < 0.5:
+        print("📊 Changes → 💵 Cash: -12")
+        print()
+        trigger_random_event(state, action="rest")
+        return
 
     print("😴 The team rests and regroups...🛌")
-
-    state.cash -= 12
     state.fuel += 6
     state.morale += 10
     if state.bugs > 0:
@@ -162,8 +167,6 @@ def rest(state: GameState) -> None:
 
     if changes:
         print("📊 Changes → " + " | ".join(changes))
-
-    trigger_random_event(state, action="rest")
 
 
 def debug(state: GameState) -> None:

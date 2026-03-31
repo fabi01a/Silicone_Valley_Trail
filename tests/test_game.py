@@ -244,6 +244,9 @@ class TestRest(unittest.TestCase):
     def test_rest_adjusts_resources(self) -> None:
         state = GameState(cash=50, fuel=50, morale=40, bugs=3)
         with patch(
+            "app.gameplay.actions.random.random",
+            return_value=0.75,
+        ), patch(
             "app.gameplay.actions.trigger_random_event",
         ), patch("builtins.print"):
             rest(state)
@@ -252,6 +255,21 @@ class TestRest(unittest.TestCase):
         self.assertEqual(state.fuel, 56)
         self.assertEqual(state.bugs, 2)
         self.assertEqual(state.cash, 38)
+
+    def test_rest_event_branch_skips_baseline(self) -> None:
+        state = GameState(cash=50, fuel=50, morale=40, bugs=3)
+        with patch(
+            "app.gameplay.actions.random.random",
+            return_value=0.25,
+        ), patch(
+            "app.gameplay.actions.trigger_random_event",
+        ) as mock_ev, patch("builtins.print"):
+            rest(state)
+        mock_ev.assert_called_once_with(state, action="rest")
+        self.assertEqual(state.cash, 38)
+        self.assertEqual(state.morale, 40)
+        self.assertEqual(state.fuel, 50)
+        self.assertEqual(state.bugs, 3)
 
     def test_rest_skips_when_cannot_afford(self) -> None:
         state = GameState(cash=10, fuel=50, morale=40, bugs=3)
