@@ -21,7 +21,9 @@ def _event_debug_standard(state: GameState) -> str:
     state.bugs = max(0, state.bugs - 3)
     state.morale -= 5
     state.cash -= 5
-    return "☄️ Gilfoyle cleans up the codebase. Bugs decrease, but morale takes a hit 📉"
+    return (
+        "☄️ Gilfoyle cleans up the codebase. Bugs decrease, but morale takes a hit 📉"
+    )
 
 
 def _event_rest_mentor_call(state: GameState) -> str:
@@ -67,7 +69,9 @@ def _event_travel_supply_drop(state: GameState) -> str:
     state.fuel += 20
     state.morale += 5
     state.bugs = max(0, state.bugs - 1)
-    return term.chartreuse("✈️ A passing Pied Piper Plane drops supplies! The team catches a lucky break 🎁")
+    return term.chartreuse(
+        "✈️ A passing Pied Piper Plane drops supplies! The team catches a lucky break 🎁"
+    )
 
 
 EVENTS: List[Dict[str, object]] = [

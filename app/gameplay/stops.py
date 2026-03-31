@@ -19,7 +19,7 @@ def handle_costco_stop(state: GameState) -> None:
     print(term.chartreuse("\n🛒 You spot a Costco nearby... bulk deals await 👀"))
 
     if state.cash < 40:
-        print(term.firebrick3("💸 You can't afford a Costco run right now 😩"))
+        print(term.firebrick1("💸 You can't afford a Costco run right now 😩"))
         return
 
     prompt = term.orange("Do you want to stop and restock? (y/n): ")
@@ -110,9 +110,13 @@ def handle_final_pitch(state: GameState) -> None:
         failed = True
 
     if state.bugs >= 5:
-        print(term.firebrick1("💥 Too many bugs. The demo crashes in front of investors 😖"))
+        print(
+            term.firebrick1(
+                "💥 Too many bugs. The demo crashes in front of investors 😖"
+            )
+        )
         failed = True
-    
+
     if failed:
         print()
         state.is_over = True
@@ -127,7 +131,9 @@ def handle_final_pitch(state: GameState) -> None:
         choice = input(prompt).strip().lower()
 
     if choice != "y":
-        print(term.firebrick1("🫥 You hesitate and the opportunity passes you by... 🎺"))
+        print(
+            term.firebrick1("🫥 You hesitate and the opportunity passes you by... 🎺")
+        )
         state.is_over = True
         state.win = False
         return

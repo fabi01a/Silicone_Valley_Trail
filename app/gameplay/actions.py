@@ -124,9 +124,11 @@ def travel(state: GameState) -> None:
     if state.current_location == "San Francisco":
         state.day += 1
         print(
-            term.purple1(f"\n📍 Day {state.day} — You’ve arrived in San Francisco 🌉 Time for Demo Day 🤗\n")
+            term.purple1(
+                f"\n📍 Day {state.day} — You’ve arrived in San Francisco 🌉 Time for Demo Day 🤗\n"
+            )
         )
-        
+
         handle_final_pitch(state)
         return
 

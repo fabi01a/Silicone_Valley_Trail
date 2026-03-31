@@ -17,7 +17,9 @@ def check_end_conditions(state: GameState) -> None:
         return
 
     if state.fuel <= 0:
-        print(term.firebrick1("⛽ You ran out of fuel. You can't continue the journey 😭"))
+        print(
+            term.firebrick1("⛽ You ran out of fuel. You can't continue the journey 😭")
+        )
         state.is_over = True
         state.win = False
         return
@@ -63,7 +65,9 @@ def prompt_action() -> str:
     return ""
 
 
-def game_loop(start_cash: int = 100, start_fuel: int = 100, start_morale: int = 50) -> None:
+def game_loop(
+    start_cash: int = 100, start_fuel: int = 100, start_morale: int = 50
+) -> None:
     """CLI: status → action → tick day → win/lose checks."""
     state = GameState(cash=start_cash, fuel=start_fuel, morale=start_morale)
 
@@ -74,7 +78,11 @@ def game_loop(start_cash: int = 100, start_fuel: int = 100, start_morale: int = 
         while not action:
             action = prompt_action()
             if not action:
-                print(term.gold("⚠️ Invalid choice. Enter 1-travel, 2-rest, or 3-debug ⚠️"))
+                print(
+                    term.gold(
+                        "⚠️ Invalid choice. Enter 1-travel, 2-rest, or 3-debug ⚠️"
+                    )
+                )
 
         if action == "travel":
             travel(state)
@@ -96,4 +104,8 @@ def game_loop(start_cash: int = 100, start_fuel: int = 100, start_morale: int = 
         )
     else:
         print()
-        print(term.deepskyblue1(" 🚗💨 Your run ended. One more iteration and you'll make it 🍀"))
+        print(
+            term.deepskyblue1(
+                " 🚗💨 Your run ended. One more iteration and you'll make it 🍀"
+            )
+        )

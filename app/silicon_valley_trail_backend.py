@@ -4,6 +4,7 @@ Silicon Valley Trail — CLI backend.
 Logic lives under `app.world`, `app.models`, `app.services`, `app.gameplay`, and
 `app.cli`. This module re-exports the public API and is the runnable entrypoint.
 """
+
 from __future__ import annotations
 import warnings
 
@@ -24,7 +25,12 @@ from app.load_env import load_dotenv_if_present
 
 load_dotenv_if_present()
 
-from app.cli.game import check_end_conditions, game_loop, prompt_action, show_player_status
+from app.cli.game import (
+    check_end_conditions,
+    game_loop,
+    prompt_action,
+    show_player_status,
+)
 from app.gameplay.actions import debug, rest, travel
 from app.gameplay.events import (
     EVENTS,
@@ -53,7 +59,6 @@ from app.world.config import (
     term,
 )
 from app.world.distance import get_distance
-
 
 __all__ = [
     "CITY_COORDS",

@@ -12,6 +12,7 @@ from app.world.config import CITY_COORDS
 
 OPENWEATHERMAP_URL = "https://api.openweathermap.org/data/2.5/weather"
 
+
 class WeatherForecast(TypedDict):
     condition: str
     fuel_multiplier: float

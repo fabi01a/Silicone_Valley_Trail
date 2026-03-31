@@ -180,7 +180,9 @@ class TestTravel(unittest.TestCase):
             return_value=self._fixed_weather_clear(),
         ), patch(
             "app.gameplay.actions.trigger_random_event",
-        ), patch("builtins.print"), patch(
+        ), patch(
+            "builtins.print"
+        ), patch(
             "builtins.input",
             return_value="n",
         ):
@@ -211,7 +213,9 @@ class TestTravel(unittest.TestCase):
         ), patch(
             "app.gameplay.actions.get_distance",
             return_value=100,
-        ), patch("builtins.print"):
+        ), patch(
+            "builtins.print"
+        ):
             travel(state)
 
         self.assertTrue(state.is_over)
@@ -232,7 +236,9 @@ class TestTravel(unittest.TestCase):
         ), patch(
             "app.gameplay.actions.get_distance",
             return_value=25,
-        ), patch("builtins.print"):
+        ), patch(
+            "builtins.print"
+        ):
             travel(state)
 
         self.assertTrue(state.is_over)
