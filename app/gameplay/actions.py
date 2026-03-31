@@ -149,6 +149,11 @@ def rest(state: GameState) -> None:
     state.cash -= 12
 
     if random.random() < REST_RANDOM_EVENT_CHANCE:
+        print(
+            term.chartreuse(
+                "💤 Rest-day overhead (space, food, coffee) hits the budget first."
+            )
+        )
         print("📊 Changes → 💵 Cash: -12")
         print()
         trigger_random_event(state, action="rest")

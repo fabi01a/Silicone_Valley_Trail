@@ -146,6 +146,8 @@ def trigger_random_event(state: GameState, action: str) -> None:
         if choice != "y":
             print("😶 You passed on the opportunity. The day continues smoothly 😀")
             return
+    else:
+        print(term.deepskyblue1(f"\n📣 Event: {event['name']}"))
 
     effect: EventEffect = event["effect"]
 
