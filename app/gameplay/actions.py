@@ -37,8 +37,8 @@ def travel(state: GameState) -> None:
 
     if state.progress_index == len(LOCATIONS) - 2:
         if state.fuel < min_fuel_this_leg:
-            print("⛽ Not enough fuel to make it to San Francisco.")
-            print("😭 The journey ends here.")
+            print(term.orange("⛽ Not enough fuel to make it to San Francisco."))
+            print(term.firebrick1("😭 The journey ends here."))
             state.is_over = True
             state.win = False
             return
@@ -93,11 +93,10 @@ def travel(state: GameState) -> None:
         changes.append(f"👾 Bugs: {state.bugs - before['bugs']:+}")
 
     if changes:
-        print()
         print("📊 Changes → " + " | ".join(changes))
 
     if state.current_location == "San Mateo" and prev_location != "San Mateo":
-        print("\n" + term.yellow("⏳ Final stretch ahead. Prepare wisely 😬"))
+        print("\n" + term.seagreen1("⏳ Final stretch ahead. Prepare wisely 😬"))
 
     if (
         is_costco_location(state.current_location)
@@ -118,9 +117,9 @@ def travel(state: GameState) -> None:
     if state.current_location == "San Francisco":
         state.day += 1
         print(
-            f"\n📍 Day {state.day} — You’ve arrived in San Francisco "
-            "🌉 Time for Demo Day 🤗\n"
+            term.purple1(f"\n📍 Day {state.day} — You’ve arrived in San Francisco 🌉 Time for Demo Day 🤗\n")
         )
+        
         handle_final_pitch(state)
         return
 
@@ -150,7 +149,7 @@ def rest(state: GameState) -> None:
         "bugs": state.bugs,
     }
 
-    print("\n😴 The team rests and regroups...")
+    print("\n😴 The team rests and regroups...🛌")
 
     state.cash -= 12
     state.fuel += 6

@@ -74,9 +74,7 @@ def game_loop(start_cash: int = 100, start_fuel: int = 100, start_morale: int = 
         while not action:
             action = prompt_action()
             if not action:
-                print(
-                    "Invalid choice. Enter 1/travel/t, 2/rest/r, or 3/debug/d."
-                )
+                print(term.yellow("⚠️ Invalid choice. Enter 1-travel, 2-rest, or 3-debug"))
 
         if action == "travel":
             travel(state)
@@ -92,11 +90,10 @@ def game_loop(start_cash: int = 100, start_fuel: int = 100, start_morale: int = 
     print(term.green3("\n\n=== Game Over ==="))
     if state.win:
         print(
-            term.yellow(
-                "🙌 You reached San Francisco, met with investors and secured "
-                "funding!!! The future is yours 🔮"
+            term.magenta2(
+                "🙌 You reached San Francisco, met with investors and secured funding!!! The future is yours 🔮"
             )
         )
     else:
         print()
-        print(" 🚗💨 Your run ended. One more iteration and you'll make it 🍀")
+        print(term.deepskyblue1(" 🚗💨 Your run ended. One more iteration and you'll make it 🍀"))

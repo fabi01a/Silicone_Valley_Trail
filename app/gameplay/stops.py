@@ -22,12 +22,12 @@ def handle_costco_stop(state: GameState) -> None:
         print(term.firebrick3("💸 You can't afford a Costco run right now 😩"))
         return
 
-    prompt = "Do you want to stop and restock? (y/n): "
+    prompt = term.orange("Do you want to stop and restock? (y/n): ")
     choice = input(prompt).strip().lower()
     print()
 
     while choice not in {"y", "n"}:
-        print("⚠️ Please enter 'y' or 'n' ⚠️")
+        print(term.gold("⚠️ Please enter 'y' or 'n' ⚠️"))
         choice = input(prompt).strip().lower()
 
     if choice != "y":
@@ -59,17 +59,17 @@ def handle_costco_stop(state: GameState) -> None:
 
 
 def handle_restaurant_stop(state: GameState) -> None:
-    print(term.yellow("\n🍽️ You spot 🌭 Not Hotdog 🥤 — a team favorite 😋"))
+    print(term.chartreuse("\n🍽️ You spot 🌭 Not Hotdog 🥤 — a team favorite 😋"))
 
     if state.cash < 20:
-        print(term.firebrick3("💸 Not enough cash for a proper meal 😩"))
+        print(term.firebrick1("💸 Not enough cash for a proper meal 😩"))
         return
 
-    meal_prompt = "Wanna grab a team meal at 🌭 Not Hotdog 🥤? (y/n): "
+    meal_prompt = term.orange("Wanna grab a team meal at 🌭 Not Hotdog 🥤? (y/n): ")
     choice = input(meal_prompt).strip().lower()
 
     while choice not in {"y", "n"}:
-        print("⚠️ Please enter 'y' or 'n' ⚠️")
+        print(term.gold("⚠️ Please enter 'y' or 'n' ⚠️"))
         choice = input(meal_prompt).strip().lower()
 
     if choice != "y":
@@ -102,29 +102,29 @@ def handle_restaurant_stop(state: GameState) -> None:
 
 
 def handle_final_pitch(state: GameState) -> None:
-    print("\n🎤 You’ve made it to Demo Day 🙌\n")
+    print(term.green3("\n🎤 You’ve made it to Demo Day 🙌\n"))
 
     if state.morale < 40:
-        print("😬 Morale is too low. The team can't present 😖")
+        print(term.firebrick1("😬 Morale is too low. The team can't present 😖"))
         state.is_over = True
         state.win = False
         return
 
     if state.bugs >= 5:
-        print("💥 Too many bugs. The demo crashes in front of investors 😖")
+        print(term.firebrick1("💥 Too many bugs. The demo crashes in front of investors 😖"))
         state.is_over = True
         state.win = False
         return
 
-    prompt = "Are you ready to present? (y/n): "
+    prompt = term.orange("Are you ready to present? (y/n): ")
     choice = input(prompt).strip().lower()
 
     while choice not in {"y", "n"}:
-        print("⚠️ Please enter 'y' or 'n' ⚠️")
+        print(term.gold("⚠️ Please enter 'y' or 'n' ⚠️"))
         choice = input(prompt).strip().lower()
 
     if choice != "y":
-        print("🫥 You hesitate and the opportunity passes you by... 🎺")
+        print(term.firebrick1("🫥 You hesitate and the opportunity passes you by... 🎺"))
         state.is_over = True
         state.win = False
         return

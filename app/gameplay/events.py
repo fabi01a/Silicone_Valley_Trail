@@ -59,7 +59,7 @@ def _event_travel_hackathon(state: GameState) -> str:
         return "⭐️ Hackathon win! You secure some funding, but introduce new bugs 🥲"
     state.morale -= 5
     state.cash -= 10
-    return "😓 Hackathon flop. Time wasted and morale drops 😩"
+    return term.orange("😓 Hackathon flop. Time wasted and morale drops 😩")
 
 
 def _event_travel_supply_drop(state: GameState) -> str:
@@ -67,11 +67,7 @@ def _event_travel_supply_drop(state: GameState) -> str:
     state.fuel += 20
     state.morale += 5
     state.bugs = max(0, state.bugs - 1)
-    return "✈️ A passing Pied Piper Plane drops supplies! The team catches a lucky break 🎁"
-
-
-def _event_travel_nothing(state: GameState) -> str:
-    return "🙂 Nothing unusual happens today 🙃"
+    return term.chartreuse("✈️ A passing Pied Piper Plane drops supplies! The team catches a lucky break 🎁")
 
 
 EVENTS: List[Dict[str, object]] = [
@@ -86,12 +82,6 @@ EVENTS: List[Dict[str, object]] = [
         "applies_to": {"travel"},
         "effect": _event_travel_flat_tire,
         "weight": 2,
-    },
-    {
-        "name": "Nothing Happens",
-        "applies_to": {"travel"},
-        "effect": _event_travel_nothing,
-        "weight": 1,
     },
     {
         "name": "Hackathon",
@@ -139,18 +129,17 @@ def trigger_random_event(state: GameState, action: str) -> None:
     eligible = [e for e in EVENTS if action in e["applies_to"]]
 
     if not eligible:
-        print("😐 Nothing unusual happens today 🙃")
         return
 
     weights = [e.get("weight", 1) for e in eligible]
     event = random.choices(eligible, weights=weights, k=1)[0]
 
     if event.get("optional", False):
-        print(term.chartreuse(f"\n⚡Opportunity: {event['name']} ⚡"))
+        print(term.cyan2(f"\n⚡Opportunity: {event['name']} ⚡"))
         choice = input("Do you want to take this opportunity? (y/n): ").strip().lower()
 
         while choice not in {"y", "n"}:
-            print("⚠️ Please enter 'y' or 'n' ⚠️")
+            print(term.gold("⚠️ Please enter 'y' or 'n' ⚠️"))
             choice = input("Do you want to take this opportunity? (y/n): ").strip().lower()
 
         if choice != "y":
@@ -166,6 +155,7 @@ def trigger_random_event(state: GameState, action: str) -> None:
         "bugs": state.bugs,
     }
 
+    print()
     print(effect(state))
 
     delta_fuel = state.fuel - before["fuel"]
