@@ -97,6 +97,7 @@ python app/silicon_valley_trail_backend.py
 
 <img width="544" height="383" alt="Screenshot" src="https://github.com/user-attachments/assets/93f56690-a20c-4545-a8b7-0cfa3f106619" />
 
+
 ➡️ Key Design Principle
 
 - State-driven architecture  
@@ -104,6 +105,7 @@ python app/silicon_valley_trail_backend.py
 - No hidden globals, no scattered state mutations  
 
 ---
+
 
 ## 📦 Data Modeling
 
@@ -138,6 +140,7 @@ Currently:
 
 ---
 
+
 ## 🌦️ Design Notes (API + Gameplay)
 
 👉 Why weather?
@@ -163,6 +166,7 @@ This ensures:
 
 ---
 
+
 ## ⚠️ Error Handling
 
 ➡️ Network failures:
@@ -183,6 +187,7 @@ except Exception:
 - Retry loops prevent invalid input  
 
 ---
+
 
 ## ⚖️ Tradeoffs
 
@@ -210,6 +215,7 @@ TRAVEL_RANDOM_EVENT_CHANCE = 0.85
 
 ---
 
+
 ## 🔍 Test Suite Overview
 
 ➡️ Covers core gameplay mechanics:
@@ -227,6 +233,7 @@ TRAVEL_RANDOM_EVENT_CHANCE = 0.85
 
 ---
 
+
 ## 🧠 Design Philosophy
 
 - clean backend system design  
@@ -236,12 +243,14 @@ TRAVEL_RANDOM_EVENT_CHANCE = 0.85
 
 ---
 
+
 ## 🤖 AI Usage
 
 Cursor was used to scaffold parts of the game and test suite.  
 ChatGPT was used to break down logic, debug, and refine system design.
 
 ---
+
 
 ## 💬 Final Thoughts
 
