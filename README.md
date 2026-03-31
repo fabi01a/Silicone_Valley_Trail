@@ -169,6 +169,7 @@ Play the game and find out.
    ⚠️ Error Handling
   
    👉🏼 Scenarios:
+   
    ➡️ Network failures:
   
    except Exception:
@@ -248,6 +249,11 @@ Play the game and find out.
       • modular architecture
       • predictable state transitions
       • readable CLI UX
+
+   -----
+
+   🤖 AI USAGE
+      Cursor was used to build out the framework of the game as well as test suite, ChatGPT was used to break down Cursor's work and fill in any 'missing' data not       acheived through Cursor
 
    -----
 
