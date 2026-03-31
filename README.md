@@ -68,7 +68,7 @@ Play the game and find out.
 
  🎮 Example Gameplay
  
-    <img width="459" height="244" alt="Screenshot 2026-03-31 at 10 21 38 AM" src="https://github.com/user-attachments/assets/ae68bcf2-2388-4d42-9689-36693344d411" />
+   <img width="459" height="244" alt="Screenshot 2026-03-31 at 10 21 38 AM" src="https://github.com/user-attachments/assets/ae68bcf2-2388-4d42-9689-36693344d411" />
 
  
  🎪 Example Event
@@ -83,7 +83,7 @@ Play the game and find out.
   
   ➡️ Core structure
   
-    <img width="544" height="383" alt="Screenshot 2026-03-31 at 10 21 05 AM" src="https://github.com/user-attachments/assets/93f56690-a20c-4545-a8b7-0cfa3f106619" />
+   <img width="544" height="383" alt="Screenshot 2026-03-31 at 10 21 05 AM" src="https://github.com/user-attachments/assets/93f56690-a20c-4545-a8b7-0cfa3f106619" />
 
  
  ➡️ Key Design Principal
@@ -135,7 +135,7 @@ Play the game and find out.
    ➡️ Gameplay impact
       Weather affects:
 
-      <img width="476" height="195" alt="Screenshot 2026-03-31 at 10 24 52 AM" src="https://github.com/user-attachments/assets/e585f003-4f50-4c8c-93ff-ffbd8c8b99ef" />
+   <img width="476" height="195" alt="Screenshot 2026-03-31 at 10 24 52 AM" src="https://github.com/user-attachments/assets/e585f003-4f50-4c8c-93ff-ffbd8c8b99ef" />
 
   
    ➡️ Fallback Design
