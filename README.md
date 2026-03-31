@@ -1,154 +1,265 @@
-🕹️ Silicon Valley Trail
+🕹️ Silicon Valley Trail 🌲
 
-A terminal-based simulation game inspired by *The Oregon Trail*, where a startup team journeys from San Jose to San Francisco to present at Demo Day.
+A terminal-based simulation game inspired by The Oregon Trail and the Silicon Valley series.
 
-Players must manage limited resources, navigate dynamic events, and make strategic decisions to successfully reach their final pitch.
+You play as Richard Hendricks, leading your team - Gilfoyle and Dinesh - on a journey from San Jose to San Francisco to pitch your latest startup to a group of investors.
 
----
+Along the way, you’ll manage resources, survive unpredictable events, and try to keep your team (and your product) from falling apart.
 
-🚀 How to Run
+Will you make it to San Francisco with enough fuel, morale, and cash?
+Can Gilfoyle keep the car running?
+Will Dinesh sabotage the presentation?
 
-Set a free [OpenWeatherMap](https://openweathermap.org/api) API key (Current Weather Data). Either export it or put `OPENWEATHERMAP_API_KEY=...` in a `.env` file at the **project root** or in **`app/.env`** (both are gitignored).
+Play the game and find out.
 
-```bash
-export OPENWEATHERMAP_API_KEY="your_key_here"
-python app/silicon_valley_trail_backend.py
-```
+-----
 
-If the key is unset, travel still works using random simulated weather (same as when the API request fails).
+🚀 Quick Start (from a fresh machine)
 
----
+1. Clone the repo
+   $ git clone <your-repo-url>
+   $ cd silicon-valley-trail
+   
+2. Create a virtual environment
+   $ python3 -m venv venv
+   $ source venv/bin/activate  # Mac/Linux
+   or
+   $ venv\Scripts\activate     # Windows
 
-🎯 Objective
+3. Install dependencies
+   $ pip install -r requirements.txt
 
-Reach San Francisco and successfully deliver your final pitch.
+   Core dependencies:
+   • blessed → terminal UI
+   • requests → API calls
+   • vpython-dotenv (optional, for local env loading)
 
----
+4. Set up your API key (optional but recommended)
+   This project uses the OpenWeatherMap API.
 
-🧠 Core Gameplay
+   Option A: .env file (recommended)
+   Create a .env file in either:
+   • project root OR
+   • app/.env
+   $ OPENWEATHERMAP_API_KEY=your_api_key_here
 
-Each day, the player chooses an action:
+   Option B: environment variable
+   $ export OPENWEATHERMAP_API_KEY=your_api_key_here
 
-* 🚗 **Travel** → move forward, consume resources, trigger events
-* 🥱 **Rest** → recover morale and some fuel
-* ⚡️ **Debug** → reduce bugs at the cost of morale and cash
+5. Run the game
+   $ python app/silicon_valley_trail_backend.py
+   or
+   $ python -m app.silicon_valley_trail_backend
 
----
+ -----
 
-📊 Resources
+🧪 Run without API (mock mode)
 
-Players must manage four core resources:
+   No API key? No problem.
 
-* 💵 **Cash** → required for recovery actions and events
-* ⛽️ **Fuel** → required to travel between locations
-* 🥳 **Morale** → affects team readiness and final pitch success
-* 👾 **Bugs** → impacts product stability and demo outcome
+   The game will automatically fall back to random weather simulation, so you can still play    fully:
 
----
+   $ unset OPENWEATHERMAP_API_KEY
+   $ python app/silicon_valley_trail_backend.py
 
-🌍 Map Progression
+ -----
 
-San Jose → Santa Clara → Palo Alto → Redwood City → Mountain View → San Mateo → Daly City → San Francisco
+ 🎮 Example Gameplay
 
-*(Additional location planned to expand to 10 total nodes)*
+ ===== Silicon Valley Trail =====
+ Day: 3
+ Location: Palo Alto
 
----
+ 💵 Cash: 82 | ⛽ Fuel: 74 | 🥳 Morale: 48 | 👾 Bugs: 2
 
-⚡ Event System
+ Choose an action:
+ 1) travel
+ 2) rest
+ 3) debug
 
-* Events trigger based on player actions
-* Weighted randomness ensures balanced gameplay
-* Optional events introduce player choice and tradeoffs
+ > 1
 
-Examples:
+ 🎪 Example Event
 
-* 🚧 Roadwork → fuel loss + bugs increase
-* 🛞 Flat tire → fuel + cash penalty
-* 💻 Hackathon → high risk / high reward
-* ✈️ Supply drop → boosts all resources
+ 🌧️ Rain slows the team and dampens morale 😟
+ 📊 Changes → ⛽️ Fuel: -9 | 🥳 Morale: -2
 
----
+ ⚡ Opportunity: Hackathon ⚡
+ Do you want to take this opportunity? (y/n):
 
-🛒 Costco System
+ -----
 
-* Available at select locations
-* One-time use per location
-* High-cost, high-reward recovery option
+  🏗️ Architecture Overview
+  ➡️ Core structure
+    | Module                | Responsibility                       |
+    | --------------------- | ------------------------------------ |
+    | `models/state.py`     | GameState (single source of truth)   |
+    | `gameplay/actions.py` | Player actions (travel, rest, debug) |
+    | `gameplay/events.py`  | Weighted random event system         |
+    | `gameplay/stops.py`   | Costco + restaurant decisions        |
+    | `gameplay/pitch.py`   | Final Demo Day logic                 |
+    | `services/weather.py` | External API integration             |
+    | `world/`              | Map data + distances                 |
+    | `cli/`                | Game loop + UI                       |
 
----
+ ➡️ Key Design Principal
+    • State-driven architecture
+    • Everything flows through: GameState
+      (No hidden globals, no scattered state mutations)
 
-🌦️ Weather System (API-Driven)
+ -----
+ 
+ 📦 Data Modeling
+ 
+ ➡️ GameState (core model)
+    Tracks:
+    • resources → cash, fuel, morale, bugs
+    • progression → progress_index, current_location
+    • flags → visited_costco, visited_restaurants
+    • outcome → is_over, win
+  
+ ➡️ Events
+    • Defined as data + behavior
+    • Weighted selection (random.choices)
+    • Optional events prompt the user
 
-Weather data is fetched from the OpenWeatherMap API and affects gameplay:
+   {
+     "name": "Hackathon",
+     "applies_to": {"travel"},
+     "optional": True,
+     "weight": 2,
+   }
 
-* ☀️ Clear → slight morale boost
-* 🌧️ Rain → morale penalty
-* 🌫️ Fog → minor disruption
-* 🥵 Heat → increased fuel consumption + morale drop
+  ➡️ Persistence
+     Currently:
+     • In-memory only
+     • Designed to be extendable (DB or file persistence later)
 
-If the key is missing, the request fails, or the response is invalid, the game falls back to simulated weather conditions.
+   -----
 
----
+   🌦️ Design Notes (API + Gameplay)
+   
+   👉🏼 Why weather?
 
-🏁 Win / Lose Conditions
+   I chose a live API because:
+    • adds real-world variability
+    • makes runs feel less deterministic
+    • introduces subtle strategy shifts
 
-### Win:
+   ➡️ Gameplay impact
+      Weather affects:
+  
+   | Condition  | Effect            |
+   | ---------- | ------------------|
+   | Rain	      | morale ↓          |
+   | Heat	      | morale ↓ + fuel ↓ |
+   | Fog	       | moale ↓           |
 
-* Reach San Francisco
-* Successfully complete the final pitch
+   ➡️ Fallback Design
+      If API fails:
 
-### Lose:
+   👉🏼 game switches to random weather
 
-* Run out of fuel
-* Run out of cash
-* Morale reaches zero
-* Too many bugs cause demo failure
-* Unable to reach final destination due to resource constraints
+   This ensures:
+    • no broken gameplay
+    • no dependency on network
 
----
+   -----
 
-🧪 Testing (Planned)
+   ⚠️ Error Handling
+  
+   👉🏼 Scenarios:
+   ➡️ Network failures:
+  
+   except Exception:
+    condition = random.choice(...)
 
-A test suite will be implemented to validate:
+   → seamless fallback
 
-* Resource boundary conditions
-* Travel and event interactions
-* Endgame scenarios and failure states
+   ➡️ Missing API Key
+     • automatically uses mock weather
+     • no crashes or warnings
 
-Testing will be developed using Cursor to ensure reliability and maintainability.
+   ➡️ Input validation
+      • All prompts enforce: (y/n)
+      • with retry loops: ⚠️ Please enter 'y' or 'n'
 
----
+   -----
 
-🧠 Design Highlights
+   ⚖️ Tradeoffs
+   
+   1. Simplicity vs realism
+      • chose lightweight simulation
+      • avoided overcomplicating economy or physics
+      
+   2. In-memory state
+      • faster iteration
+      • easier testing
+      • not persistent (intentional for scope)
 
-* Clear separation of systems:
+   3. High event probability
+      $ TRAVEL_RANDOM_EVENT_CHANCE = 0.85
+      • keeps gameplay dynamic
+      • slightly less “realistic,” more fun
+   
+   4. API abstraction
+      • weather only affects fuel + morale 
+      • avoids coupling API too tightly to game logic
 
-  * Weather = environment effects
-  * Events = team-driven outcomes
-* Focus on meaningful resource tradeoffs
-* Guardrails to prevent soft-lock scenarios
-* Incremental complexity with maintainable structure
+   -----
 
----
+   🔍 Test Suite Overview
 
-⚖️ Tradeoffs
+   ➡️ Covers core gameplay mechanics:
+   
+   ✅ GameState
+     • location syncing
+     • boundary conditions
+    
+   ✅ Travel system
+     • progression
+     • fuel constraints
+     • final leg guardrail
+    
+   ✅ Weather system
+     • API mapping
+     • fallback behavior
+    
+   ✅ Events
+     • resource deltas
+     • side effects
+    
+   ✅ Actions
+     • rest/debug constraints
+     • resource updates
+    
+   ✅ Final pitch
+     • win/lose conditions
 
-* Prioritized gameplay clarity over feature bloat
-* Used API fallback to ensure consistent playability
-* Kept architecture simple and readable for extensibility
+   ➡️ Mocking Stategy
+     • API calls mocked via unittest.mock
+     • randomness controlled for deterministic tests
 
----
+   -----
 
-🤖 AI Usage
+   🧠 Design Philosophy
+      This project focuses on:
+      • clean backend system design
+      • modular architecture
+      • predictable state transitions
+      • readable CLI UX
 
-Tools like Cursor and ChatGPT were used for ideation, debugging, and architectural guidance while maintaining full understanding and ownership of the implementation.
+   -----
 
----
+   💬 Final Thoughts
+      This started as a simple CLI game and evolved into a system design exercise:
+      • managing complexity
+      • enforcing boundaries between systems
+      • balancing gameplay vs logic
+      
 
-🚀 Future Improvements
-
-* Add additional location(s) to expand gameplay
-* Improve balancing of events and resource flow
-* Enhance CLI UI/UX with richer formatting
-* Expand test coverage
-
+   ⏳ If I had more time, I’d explore:
+      • persistence (save/load runs)
+      • richer event chains
+      • difficulty modes
+      • UI upgrades
