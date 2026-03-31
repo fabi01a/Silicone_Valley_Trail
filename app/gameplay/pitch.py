@@ -12,7 +12,7 @@ def final_pitch(state: GameState) -> bool:
     Final pitch at San Francisco.
     Returns True if investors buy in.
     """
-    print("\n🎤 Final Demo Day Pitch —  Dinesh is presenting...🙏\n")
+    print(term.deepskyblue1("\n🎤 Final Demo Day Pitch —  Dinesh is presenting...🙏\n"))
 
     success_chance = 0.4
 
@@ -22,7 +22,7 @@ def final_pitch(state: GameState) -> bool:
         success_chance -= 0.2
 
     if state.bugs >= 8:
-        print("💥 Too many bugs. The demo crashes instantly 🌋")
+        print(term.firebrick1("💥 Too many bugs. The demo crashes instantly 🌋"))
         return False
 
     if state.bugs > 5:
@@ -30,8 +30,7 @@ def final_pitch(state: GameState) -> bool:
 
     if random.random() < success_chance:
         print(
-            "🚀 The demo is flawless! Investors are impressed 💰 "
-            "Funding is coming your way! 🤑"
+            term.magenta2("🚀 The demo is flawless! Investors are impressed 💰 Funding is coming your way! 🤑")
         )
         return True
 

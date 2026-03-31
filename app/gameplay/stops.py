@@ -103,14 +103,18 @@ def handle_restaurant_stop(state: GameState) -> None:
 def handle_final_pitch(state: GameState) -> None:
     print(term.green3("\n🎤 You’ve made it to Demo Day 🙌\n"))
 
+    failed = False
+
     if state.morale < 40:
         print(term.firebrick1("😬 Morale is too low. The team can't present 😖"))
-        state.is_over = True
-        state.win = False
-        return
+        failed = True
 
     if state.bugs >= 5:
         print(term.firebrick1("💥 Too many bugs. The demo crashes in front of investors 😖"))
+        failed = True
+    
+    if failed:
+        print()
         state.is_over = True
         state.win = False
         return

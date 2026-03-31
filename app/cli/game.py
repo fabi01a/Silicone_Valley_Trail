@@ -74,7 +74,7 @@ def game_loop(start_cash: int = 100, start_fuel: int = 100, start_morale: int = 
         while not action:
             action = prompt_action()
             if not action:
-                print(term.yellow("⚠️ Invalid choice. Enter 1-travel, 2-rest, or 3-debug"))
+                print(term.gold("⚠️ Invalid choice. Enter 1-travel, 2-rest, or 3-debug ⚠️"))
 
         if action == "travel":
             travel(state)

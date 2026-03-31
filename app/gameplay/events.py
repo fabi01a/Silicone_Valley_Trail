@@ -136,11 +136,13 @@ def trigger_random_event(state: GameState, action: str) -> None:
 
     if event.get("optional", False):
         print(term.deepskyblue1(f"\n⚡Opportunity: {event['name']} ⚡"))
-        choice = term.orange(input("Do you want to take this opportunity? (y/n): ")).strip().lower()
+        
+        prompt = term.orange(input("Do you want to take this opportunity? (y/n): ")).strip().lower()
+        choice = input(prompt).strip().lower()
 
         while choice not in {"y", "n"}:
             print(term.gold("⚠️ Please enter 'y' or 'n' ⚠️"))
-            choice = term.orange(input("Do you want to take this opportunity? (y/n): ")).strip().lower()
+            choice = input(prompt).strip().lower()
 
         if choice != "y":
             print("😶 You passed on the opportunity. The day continues smoothly 😀")
