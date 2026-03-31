@@ -14,6 +14,7 @@ Play the game and find out.
 
 -----
 
+
 🚀 Quick Start (from a fresh machine)
 
 1. Clone the repo
@@ -64,60 +65,26 @@ Play the game and find out.
 
  -----
 
+
  🎮 Example Gameplay
+ 
     <img width="459" height="244" alt="Screenshot 2026-03-31 at 10 21 38 AM" src="https://github.com/user-attachments/assets/ae68bcf2-2388-4d42-9689-36693344d411" />
 
  
-
- ===== Silicon Valley Trail =====
- Day: 3
- Location: Palo Alto
-
- 💵 Cash: 82 | ⛽ Fuel: 74 | 🥳 Morale: 48 | 👾 Bugs: 2
-
- Choose an action:
- 1) travel
- 2) rest
- 3) debug
-
- > 1
-
  🎪 Example Event
 
  <img width="391" height="114" alt="Screenshot 2026-03-31 at 10 22 07 AM" src="https://github.com/user-attachments/assets/cb6890a2-5ce5-493b-a728-0d25fe9fa7e9" />
 
 
- 🌧️ Rain slows the team and dampens morale 😟
- 📊 Changes → ⛽️ Fuel: -9 | 🥳 Morale: -2
-
- ⚡ Opportunity: Hackathon ⚡
- Do you want to take this opportunity? (y/n):
-
  -----
+
 
   🏗️ Architecture Overview
   
   ➡️ Core structure
-    | Module                | Responsibility                       |
-    | --------------------- | ------------------------------------ |
-    | `models/state.py`     | GameState (single source of truth)   |
-    | `gameplay/actions.py` | Player actions (travel, rest, debug) |
-    | `gameplay/events.py`  | Weighted random event system         |
-    | `gameplay/stops.py`   | Costco + restaurant decisions        |
-    | `gameplay/pitch.py`   | Final Demo Day logic                 |
-    | `services/weather.py` | External API integration             |
-    | `world/`              | Map data + distances                 |
-    | `cli/`                | Game loop + UI                       |
+  
+    <img width="544" height="383" alt="Screenshot 2026-03-31 at 10 21 05 AM" src="https://github.com/user-attachments/assets/93f56690-a20c-4545-a8b7-0cfa3f106619" />
 
- 
- <img width="544" height="383" alt="Screenshot 2026-03-31 at 10 21 05 AM" src="https://github.com/user-attachments/assets/93f56690-a20c-4545-a8b7-0cfa3f106619" />
-
- 
- 
- 
- 
- 
- 
  
  ➡️ Key Design Principal
     • State-driven architecture
@@ -125,6 +92,7 @@ Play the game and find out.
       (No hidden globals, no scattered state mutations)
 
  -----
+
  
  📦 Data Modeling
  
@@ -154,6 +122,7 @@ Play the game and find out.
 
    -----
 
+
    🌦️ Design Notes (API + Gameplay)
    
    👉🏼 Why weather?
@@ -165,13 +134,10 @@ Play the game and find out.
 
    ➡️ Gameplay impact
       Weather affects:
-  
-   | Condition  | Effect            |
-   | ---------- | ------------------|
-   | Rain	      | morale ↓          |
-   | Heat	      | morale ↓ + fuel ↓ |
-   | Fog	       | moale ↓           |
 
+      <img width="476" height="195" alt="Screenshot 2026-03-31 at 10 24 52 AM" src="https://github.com/user-attachments/assets/e585f003-4f50-4c8c-93ff-ffbd8c8b99ef" />
+
+  
    ➡️ Fallback Design
       If API fails:
 
@@ -182,6 +148,7 @@ Play the game and find out.
     • no dependency on network
 
    -----
+
 
    ⚠️ Error Handling
   
@@ -204,6 +171,7 @@ Play the game and find out.
 
    -----
 
+
    ⚖️ Tradeoffs
    
    1. Simplicity vs realism
@@ -225,6 +193,7 @@ Play the game and find out.
       • avoids coupling API too tightly to game logic
 
    -----
+   
 
    🔍 Test Suite Overview
 
@@ -260,6 +229,7 @@ Play the game and find out.
 
    -----
 
+
    🧠 Design Philosophy
       This project focuses on:
       • clean backend system design
@@ -269,10 +239,12 @@ Play the game and find out.
 
    -----
 
+
    🤖 AI USAGE
       Cursor was used to build out the framework of the game as well as test suite, ChatGPT was used to break down Cursor's work and fill in any 'missing' data not       acheived through Cursor
 
    -----
+   
 
    💬 Final Thoughts
       This started as a simple CLI game and evolved into a system design exercise:
