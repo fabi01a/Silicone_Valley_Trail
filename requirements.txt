@@ -1,0 +1,5 @@
+# Project runtime requirements
+# Python >= 3.10
+# pip >= 24.0 (recommended)
+blessed>=1.20.0
+requests>=2.31.0

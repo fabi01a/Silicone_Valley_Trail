@@ -31,9 +31,7 @@ def final_pitch(state: GameState) -> bool:
 
     if random.random() < success_chance:
         print(
-            term.magenta2(
-                "🚀 The demo is flawless! Investors are impressed 💰 Funding is coming your way! 🤑"
-            )
+            term.magenta2("🚀 The demo is flawless! Investors are impressed 💰 Funding is coming your way! 🤑")
         )
         return True
 

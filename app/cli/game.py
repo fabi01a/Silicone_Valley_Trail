@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+import os
+import sys
+
 from app.gameplay.actions import debug, rest, travel
 from app.models.state import GameState
 from app.world.config import LOCATIONS, term
@@ -36,6 +39,13 @@ def check_end_conditions(state: GameState) -> None:
 
 def show_player_status(state: GameState) -> None:
     """Print the current state to the CLI."""
+    python_version = f"{sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}"
+    weather_mode = (
+        "live (OpenWeatherMap)"
+        if os.environ.get("OPENWEATHERMAP_API_KEY", "").strip()
+        else "simulated fallback"
+    )
+
     print()
     print(term.green3("\n===== Silicon Valley Trail ====="))
     print(f"{term.green3('Day:')} {term.green3(str(state.day))}")
@@ -44,6 +54,7 @@ def show_player_status(state: GameState) -> None:
         f"💵 Cash: {state.cash} | ⛽️ Fuel: {state.fuel} | "
         f"🥳 Morale: {state.morale} | 👾 Bugs: {state.bugs}"
     )
+    print(f"🧰 Runtime: Python {python_version} | 🌦️ Weather mode: {weather_mode}")
 
 
 def prompt_action() -> str:
