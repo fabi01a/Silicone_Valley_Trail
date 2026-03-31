@@ -65,6 +65,9 @@ Play the game and find out.
  -----
 
  🎮 Example Gameplay
+    <img width="459" height="244" alt="Screenshot 2026-03-31 at 10 21 38 AM" src="https://github.com/user-attachments/assets/ae68bcf2-2388-4d42-9689-36693344d411" />
+
+ 
 
  ===== Silicon Valley Trail =====
  Day: 3
@@ -81,6 +84,9 @@ Play the game and find out.
 
  🎪 Example Event
 
+ <img width="391" height="114" alt="Screenshot 2026-03-31 at 10 22 07 AM" src="https://github.com/user-attachments/assets/cb6890a2-5ce5-493b-a728-0d25fe9fa7e9" />
+
+
  🌧️ Rain slows the team and dampens morale 😟
  📊 Changes → ⛽️ Fuel: -9 | 🥳 Morale: -2
 
@@ -90,6 +96,7 @@ Play the game and find out.
  -----
 
   🏗️ Architecture Overview
+  
   ➡️ Core structure
     | Module                | Responsibility                       |
     | --------------------- | ------------------------------------ |
@@ -102,6 +109,16 @@ Play the game and find out.
     | `world/`              | Map data + distances                 |
     | `cli/`                | Game loop + UI                       |
 
+ 
+ <img width="544" height="383" alt="Screenshot 2026-03-31 at 10 21 05 AM" src="https://github.com/user-attachments/assets/93f56690-a20c-4545-a8b7-0cfa3f106619" />
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
  ➡️ Key Design Principal
     • State-driven architecture
     • Everything flows through: GameState
