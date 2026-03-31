@@ -11,13 +11,13 @@ def check_end_conditions(state: GameState) -> None:
     """Set game over state from resource loss."""
     if state.cash <= 0:
         print()
-        print("💸 You ran out of cash. The startup collapses 😭")
+        print(term.firebrick1("💸 You ran out of cash. The startup collapses 😭"))
         state.is_over = True
         state.win = False
         return
 
     if state.fuel <= 0:
-        print("⛽ You ran out of fuel. You can't continue the journey 😭")
+        print(term.firebrick1("⛽ You ran out of fuel. You can't continue the journey 😭"))
         state.is_over = True
         state.win = False
         return
