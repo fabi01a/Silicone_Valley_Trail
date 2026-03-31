@@ -38,14 +38,14 @@ Play the game and find out.
 4. Set up your API key (optional but recommended)
    This project uses the OpenWeatherMap API.
 
-   Option A: .env file (recommended)
-   Create a .env file in either:
-   • project root OR
-   • app/.env
-   $ OPENWEATHERMAP_API_KEY=your_api_key_here
+  • Option A: .env file (recommended)
+    Create a .env file in either:
+       • project root OR
+       • app/.env
+       $ OPENWEATHERMAP_API_KEY=your_api_key_here
 
-   Option B: environment variable
-   $ export OPENWEATHERMAP_API_KEY=your_api_key_here
+  • Option B: environment variable
+     $ export OPENWEATHERMAP_API_KEY=your_api_key_here
 
 5. Run the game
    $ python app/silicon_valley_trail_backend.py
@@ -58,7 +58,7 @@ Play the game and find out.
 
    No API key? No problem.
 
-   The game will automatically fall back to random weather simulation, so you can still play    fully:
+   The game will automatically fall back to random weather simulation, so you can still play fully:
 
    $ unset OPENWEATHERMAP_API_KEY
    $ python app/silicon_valley_trail_backend.py
