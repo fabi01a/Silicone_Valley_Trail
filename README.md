@@ -48,24 +48,27 @@ Play the game and find out.
      • app/.env
      $ OPENWEATHERMAP_API_KEY=your_api_key_here
 
-  • Option B: environment variable
-     $ export OPENWEATHERMAP_API_KEY=your_api_key_here
+  ### • Option B: environment variable
+  ``` bash
+     export OPENWEATHERMAP_API_KEY=your_api_key_here
+   ```
 
-5. Run the game
-   $ python app/silicon_valley_trail_backend.py
-   or
-   $ python -m app.silicon_valley_trail_backend
+### 5. Run the game
+``` bash
+   python app/silicon_valley_trail_backend.py
+   # or
+   python -m app.silicon_valley_trail_backend
+``` bash
 
  -----
 
-🧪 Run without API (mock mode)
-
-   No API key? No problem.
-
-   The game will automatically fall back to random weather simulation, so you can still play fully:
-
-   $ unset OPENWEATHERMAP_API_KEY
-   $ python app/silicon_valley_trail_backend.py
+### 🧪 Run without API (mock mode)
+No API key? No problem.
+The game will automatically fall back to random weather simulation, so you can still play fully:
+``` bash
+ unset OPENWEATHERMAP_API_KEY
+ python app/silicon_valley_trail_backend.py
+```
 
  -----
 
@@ -159,9 +162,11 @@ Play the game and find out.
    👉🏼 Scenarios:
    
    ➡️ Network failures:
+   ``` bash
   
    except Exception:
     condition = random.choice(...)
+   ```
 
    → seamless fallback
 
