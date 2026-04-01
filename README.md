@@ -165,6 +165,7 @@ I chose a live API because:
 <img width="410" height="108" alt="Screenshot 2026-03-31 at 7 21 07 PM" src="https://github.com/user-attachments/assets/393a3de0-73b2-4b99-80bf-c03ca459add0" />
 
 
+
 ➡️ Fallback Design
 
 If API fails:
