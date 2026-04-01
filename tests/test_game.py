@@ -100,13 +100,17 @@ class TestGetWeather(unittest.TestCase):
         self.assertEqual(w["condition"], "heat")
         self.assertEqual(w["fuel_multiplier"], 1.3)
 
-    def test_api_mid_temp_maps_to_rain(self) -> None:
+    def test_api_mid_temp_band_uses_weighted_variety(self) -> None:
         with patch.dict(os.environ, {"OPENWEATHERMAP_API_KEY": "test-key"}), patch(
             "app.services.weather.requests.get",
             return_value=self._mock_response(64.0),
+        ), patch(
+            "app.services.weather.random.choices",
+            return_value=["fog"],
         ):
             w = get_weather("San Jose", "Santa Clara")
-        self.assertEqual(w["condition"], "rain")
+        self.assertEqual(w["condition"], "fog")
+        self.assertEqual(w["fuel_multiplier"], 1.1)
 
     def test_api_warm_uses_weighted_branch(self) -> None:
         with patch.dict(os.environ, {"OPENWEATHERMAP_API_KEY": "test-key"}), patch(

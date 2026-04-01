@@ -59,7 +59,11 @@ def get_weather(start: str, end: str) -> WeatherForecast:
         elif temp_f > 85:
             condition = "heat"
         elif 55 <= temp_f <= 70:
-            condition = "rain"
+            # Mild temps are common along the route; pure "rain" every leg felt repetitive.
+            condition = random.choices(
+                ["rain", "fog", "clear"],
+                weights=[0.5, 0.28, 0.22],
+            )[0]
         else:
             condition = random.choices(
                 ["clear", "rain", "fog"],
