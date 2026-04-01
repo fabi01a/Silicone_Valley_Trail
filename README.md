@@ -155,7 +155,8 @@ I chose a live API because:
 
 ➡️ Gameplay impact
 
-<img width="530" height="170" alt="Screenshot 2026-03-31 at 7 23 07 PM" src="https://github.com/user-attachments/assets/8afb5ac0-c748-4af9-9a04-5741cea7cf83" />
+<img width="530" height="170" alt="Screenshot 2026-03-31 at 7 23 07 PM" src="https://github.com/user-attachments/assets/4c95fbbe-8a8b-4218-9260-2eab5513c8f3" />
+
 
 
 ➡️ Fallback Design
