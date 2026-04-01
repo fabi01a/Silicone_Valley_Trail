@@ -12,8 +12,20 @@ Will Dinesh sabotage the presentation?
 
 Play the game and find out.
 
----
 
+---
+## 👾 Game Play
+
+
+https://github.com/user-attachments/assets/7ff1c8ee-72db-43cc-a611-78ba75d84ba6
+
+
+
+https://github.com/user-attachments/assets/8cf228ee-dde7-4d2a-b747-a3639033a638
+
+
+
+---
 ## 🚀 Quick Start (from a fresh machine)
 
 ### 1. Clone the repo
@@ -67,8 +79,8 @@ python app/silicon_valley_trail_backend.py
 python -m app.silicon_valley_trail_backend
 ```
 
----
 
+---
 ### 🧪 Run without API (mock mode)
 
 No API key? No problem.  
@@ -79,8 +91,8 @@ unset OPENWEATHERMAP_API_KEY
 python app/silicon_valley_trail_backend.py
 ```
 
----
 
+---
 ## 🎮 Example Gameplay
 
 <img width="459" height="244" alt="Screenshot" src="https://github.com/user-attachments/assets/ae68bcf2-2388-4d42-9689-36693344d411" />
@@ -89,8 +101,8 @@ python app/silicon_valley_trail_backend.py
 
 <img width="391" height="114" alt="Screenshot" src="https://github.com/user-attachments/assets/cb6890a2-5ce5-493b-a728-0d25fe9fa7e9" />
 
----
 
+---
 ## 🏗️ Architecture Overview
 
 ➡️ Core structure
@@ -104,9 +116,8 @@ python app/silicon_valley_trail_backend.py
 - Everything flows through: `GameState`  
 - No hidden globals, no scattered state mutations  
 
+
 ---
-
-
 ## 📦 Data Modeling
 
 ➡️ GameState (core model)
@@ -138,9 +149,8 @@ Currently:
 - In-memory only  
 - Designed to be extendable later  
 
+
 ---
-
-
 ## 🌦️ Design Notes (API + Gameplay)
 
 👉 Why weather?
@@ -164,9 +174,8 @@ This ensures:
 - no broken gameplay  
 - no dependency on network  
 
+
 ---
-
-
 ## ⚠️ Error Handling
 
 ➡️ Network failures:
@@ -186,9 +195,8 @@ except Exception:
 - All prompts enforce `(y/n)`  
 - Retry loops prevent invalid input  
 
+
 ---
-
-
 ## ⚖️ Tradeoffs
 
 1. Simplicity vs realism  
@@ -213,9 +221,8 @@ TRAVEL_RANDOM_EVENT_CHANCE = 0.85
 - weather affects fuel + morale  
 - avoids tight coupling  
 
+
 ---
-
-
 ## 🔍 Test Suite Overview
 
 ➡️ Covers core gameplay mechanics:
@@ -231,9 +238,8 @@ TRAVEL_RANDOM_EVENT_CHANCE = 0.85
 - API calls mocked (`unittest.mock`)  
 - randomness controlled for deterministic tests  
 
+
 ---
-
-
 ## 🧠 Design Philosophy
 
 - clean backend system design  
@@ -241,17 +247,15 @@ TRAVEL_RANDOM_EVENT_CHANCE = 0.85
 - predictable state transitions  
 - readable CLI UX  
 
+
 ---
-
-
 ## 🤖 AI Usage
 
 Cursor was used to scaffold parts of the game and test suite.  
 ChatGPT was used to break down logic, debug, and refine system design.
 
+
 ---
-
-
 ## 💬 Final Thoughts
 
 This started as a simple CLI game and evolved into a system design exercise:
