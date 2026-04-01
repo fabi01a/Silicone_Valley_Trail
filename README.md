@@ -14,18 +14,7 @@ Play the game and find out.
 
 
 ---
-## 👾 Game Play
 
-
-https://github.com/user-attachments/assets/7ff1c8ee-72db-43cc-a611-78ba75d84ba6
-
-
-
-https://github.com/user-attachments/assets/8cf228ee-dde7-4d2a-b747-a3639033a638
-
-
-
----
 ## 🚀 Quick Start (from a fresh machine)
 
 ### 1. Clone the repo
@@ -81,6 +70,7 @@ python -m app.silicon_valley_trail_backend
 
 
 ---
+
 ### 🧪 Run without API (mock mode)
 
 No API key? No problem.  
@@ -93,6 +83,7 @@ python app/silicon_valley_trail_backend.py
 
 
 ---
+
 ## 🎮 Example Gameplay
 
 <img width="459" height="244" alt="Screenshot" src="https://github.com/user-attachments/assets/ae68bcf2-2388-4d42-9689-36693344d411" />
@@ -103,12 +94,12 @@ python app/silicon_valley_trail_backend.py
 
 
 ---
+
 ## 🏗️ Architecture Overview
 
 ➡️ Core structure
 
-<img width="530" height="170" alt="Screenshot 2026-03-31 at 7 23 07 PM" src="https://github.com/user-attachments/assets/bda08375-7c6e-4ae7-98ae-a335a409000c" />
-
+<img width="544" height="383" alt="Screenshot" src="https://github.com/user-attachments/assets/93f56690-a20c-4545-a8b7-0cfa3f106619" />
 
 ➡️ Key Design Principle
 
@@ -118,6 +109,7 @@ python app/silicon_valley_trail_backend.py
 
 
 ---
+
 ## 📦 Data Modeling
 
 ➡️ GameState (core model)
@@ -151,6 +143,7 @@ Currently:
 
 
 ---
+
 ## 🌦️ Design Notes (API + Gameplay)
 
 👉 Why weather?
@@ -162,9 +155,7 @@ I chose a live API because:
 
 ➡️ Gameplay impact
 
-<img width="410" height="108" alt="Screenshot 2026-03-31 at 7 21 07 PM" src="https://github.com/user-attachments/assets/393a3de0-73b2-4b99-80bf-c03ca459add0" />
-
-
+<img width="476" height="195" alt="Screenshot" src="https://github.com/user-attachments/assets/e585f003-4f50-4c8c-93ff-ffbd8c8b99ef" />
 
 ➡️ Fallback Design
 
@@ -178,6 +169,7 @@ This ensures:
 
 
 ---
+
 ## ⚠️ Error Handling
 
 ➡️ Network failures:
@@ -199,6 +191,7 @@ except Exception:
 
 
 ---
+
 ## ⚖️ Tradeoffs
 
 1. Simplicity vs realism  
@@ -225,6 +218,7 @@ TRAVEL_RANDOM_EVENT_CHANCE = 0.85
 
 
 ---
+
 ## 🔍 Test Suite Overview
 
 ➡️ Covers core gameplay mechanics:
@@ -242,6 +236,7 @@ TRAVEL_RANDOM_EVENT_CHANCE = 0.85
 
 
 ---
+
 ## 🧠 Design Philosophy
 
 - clean backend system design  
@@ -251,6 +246,7 @@ TRAVEL_RANDOM_EVENT_CHANCE = 0.85
 
 
 ---
+
 ## 🤖 AI Usage
 
 Cursor was used to scaffold parts of the game and test suite.  
@@ -258,6 +254,7 @@ ChatGPT was used to break down logic, debug, and refine system design.
 
 
 ---
+
 ## 💬 Final Thoughts
 
 This started as a simple CLI game and evolved into a system design exercise:
