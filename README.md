@@ -107,7 +107,7 @@ python app/silicon_valley_trail_backend.py
 
 ➡️ Core structure
 
-<img width="544" height="383" alt="Screenshot" src="https://github.com/user-attachments/assets/93f56690-a20c-4545-a8b7-0cfa3f106619" />
+<img width="530" height="170" alt="Screenshot 2026-03-31 at 7 23 07 PM" src="https://github.com/user-attachments/assets/bda08375-7c6e-4ae7-98ae-a335a409000c" />
 
 
 ➡️ Key Design Principle
