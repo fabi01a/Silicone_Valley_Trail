@@ -1,3 +1,5 @@
+
+
 🕹️ Silicon Valley Trail 🌲
 
 A terminal-based simulation game inspired by The Oregon Trail and the Silicon Valley series.
@@ -91,6 +93,10 @@ python app/silicon_valley_trail_backend.py
 ## 🎪 Example Event
 
 <img width="391" height="114" alt="Screenshot" src="https://github.com/user-attachments/assets/cb6890a2-5ce5-493b-a728-0d25fe9fa7e9" />
+
+
+
+https://github.com/user-attachments/assets/bee82f04-9b25-4838-b824-c721269e029a
 
 
 ---
