@@ -95,7 +95,7 @@ python app/silicon_valley_trail_backend.py
 <img width="391" height="114" alt="Screenshot" src="https://github.com/user-attachments/assets/cb6890a2-5ce5-493b-a728-0d25fe9fa7e9" />
 
 
-
+## 🕹️ Example Game Session Demo
 https://github.com/user-attachments/assets/bee82f04-9b25-4838-b824-c721269e029a
 
 
@@ -199,33 +199,6 @@ except Exception:
 
 ---
 
-## ⚖️ Tradeoffs
-
-1. Simplicity vs realism  
-- chose lightweight simulation  
-- avoided overcomplicating economy  
-
-2. In-memory state  
-- faster iteration  
-- easier testing  
-- not persistent (intentional)  
-
-3. High event probability  
-
-```python
-TRAVEL_RANDOM_EVENT_CHANCE = 0.85
-```
-
-- keeps gameplay dynamic  
-- slightly less realistic, more fun  
-
-4. API abstraction  
-- weather affects fuel + morale  
-- avoids tight coupling  
-
-
----
-
 ## 🔍 Test Suite Overview
 
 ➡️ Covers core gameplay mechanics:
@@ -260,18 +233,3 @@ Cursor was used to scaffold parts of the game and test suite.
 ChatGPT was used to break down logic, debug, and refine system design.
 
 
----
-
-## 💬 Final Thoughts
-
-This started as a simple CLI game and evolved into a system design exercise:
-
-- managing complexity  
-- enforcing boundaries between systems  
-- balancing gameplay vs logic  
-
-⏳ If I had more time:
-- persistence (save/load runs)  
-- richer event chains  
-- difficulty modes  
-- UI upgrades  
